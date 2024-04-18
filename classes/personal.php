@@ -6,6 +6,7 @@ class Personal {
     private string $password;
     private string $profilePicture;
     private string $role;
+    private string $hubname; // Voeg het attribuut hubname toe
 
     public function setName($username){
         if(empty($username)){
@@ -60,14 +61,25 @@ class Personal {
         return $this->role;
     }
 
+    // Methode om de hubnaam in te stellen
+    public function setHubname($hubname) {
+        $this->hubname = $hubname;
+    }
+
+    // Methode om de hubnaam op te halen
+    public function getHubname() {
+        return $this->hubname;
+    }
+
     public function save(){
         $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
-        $statement = $conn->prepare("INSERT INTO account (username, email, password, profilePicture, role) VALUES (:name, :email, :password, :profilePicture, :role)");
+        $statement = $conn->prepare("INSERT INTO account (username, email, password, profilePicture, role, hubname) VALUES (:name, :email, :password, :profilePicture, :role, :hubname)");
         $statement->bindValue("name", $this->username);
         $statement->bindValue("email", $this->email);
         $statement->bindValue("password", $this->password);
         $statement->bindValue("profilePicture", $this->profilePicture);
         $statement->bindValue("role", $this->role);
+        $statement->bindValue("hubname", $this->hubname); // Voeg hubname toe aan de query
         return $statement->execute();
     }
 
@@ -86,3 +98,5 @@ class Personal {
         return $statement->execute();
     }
 }
+
+?>
