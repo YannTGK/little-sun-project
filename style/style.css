@@ -1,0 +1,58 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.header {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 200px;
+    height: 100vh;
+}
+
+.headerItems {
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    width: 100%;
+    height: 120px;
+    margin-top: 10px;
+}
+
+.headerItems:not(.headerItems:first-child) {
+    margin-top: 10px;
+}
+
+.headerItem1 {
+    background-image: url(../images/logo.png);
+}
+.headerItem2 {
+    background-image: url(../images/active_home.png);
+}
+.headerItem3 {
+    background-image: url(../images/not_active_profile.png);
+}
+.headerItem4 {
+    background-image: url(../images/not_active_calendar.png);
+}
+.headerItem5 {
+    background-image: url(../images/not_active_settings.png);
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    font-size: 140%;
+}
+
+.headerItem6 {
+    margin-top: auto    ;
+    height: auto;
+    text-align: center;
+}
+
+.active {
+    background-color: white;
+}
