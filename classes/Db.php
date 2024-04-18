@@ -16,5 +16,3 @@ class Db{
     }
 
 }
-
-//video goodbyts 15
