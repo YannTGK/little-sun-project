@@ -32,6 +32,13 @@ class Personal {
         return $this->email;
     }
 
+    public static function updatePasswordById($id, $hashedPassword) {
+        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $statement = $conn->prepare("UPDATE account SET password = :password WHERE id = :id");
+        $statement->bindValue(":password", $hashedPassword);
+        $statement->bindValue(":id", $id);
+        return $statement->execute();
+    }
 
     public function setPassword($password){
         if(empty($password)){

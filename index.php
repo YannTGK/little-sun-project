@@ -19,5 +19,6 @@ if( !isset($_SESSION['loggedin'])){
 <div class="header">
 <?php include_once("../Littlesun/classes/nav.php"); ?>
     </div>
+    
 </body>
 </html>
