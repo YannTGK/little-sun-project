@@ -5,6 +5,7 @@ class Manager {
     private string $email;
     private string $password;
     private string $profilePicture;
+    private string $role;
 
     public function setName($name){
         if(empty($name)){
@@ -30,6 +31,7 @@ class Manager {
         return $this->email;
     }
 
+
     public function setPassword($password){
         if(empty($password)){
             throw new Exception("Password cannot be empty");
@@ -50,19 +52,28 @@ class Manager {
         return $this->profilePicture;
     }
 
+    public function setRole($role) {
+        $this->role = $role;
+    }
+
+    public function getRole() {
+        return $this->role;
+    }
+
     public function save(){
         $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
-        $statement = $conn->prepare("INSERT INTO account (name, email, password, profilePicture) VALUES (:name, :email, :password, :profilePicture)");
+        $statement = $conn->prepare("INSERT INTO account (username, email, password, profilePicture, role) VALUES (:name, :email, :password, :profilePicture, :role)");
         $statement->bindValue("name", $this->name);
         $statement->bindValue("email", $this->email);
         $statement->bindValue("password", $this->password);
         $statement->bindValue("profilePicture", $this->profilePicture);
+        $statement->bindValue("role", $this->role);
         return $statement->execute();
     }
 
     public static function getAll(){
         $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
-        $statement = $conn->prepare("SELECT * FROM account");
+        $statement = $conn->prepare("SELECT * FROM account WHERE role != 'admin'");
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;
