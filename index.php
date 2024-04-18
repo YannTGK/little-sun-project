@@ -23,7 +23,7 @@ if( !isset($_SESSION['loggedin'])){
         <a href="profile/index.html"><div class="headerItems headerItem3"></div></a>
         <a href="calendar/index.html"><div class="headerItems headerItem4"></div></a>
         <a href="settings/index.html"><div class="headerItems headerItem5"></div></a>
-        <a href="login/index.html"><div class="headerItems headerItem6">Logout</div></a>
+        <a href="login/index.html"><div class="headerItems headerItem6">Logoutlogout</div></a>
     </div>
 
 </body>
