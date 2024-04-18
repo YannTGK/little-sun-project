@@ -1,7 +1,7 @@
 
 <?php
 
-include_once(__DIR__ . "/../Littlesun/little-sun-project/classes/Db.php");
+include_once(__DIR__ . "/../Littlesun/classes/Db.php");
 
 
 	function canLogin($pEmail, $Ppassword){
