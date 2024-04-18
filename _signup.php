@@ -3,7 +3,7 @@ include_once(__DIR__ . "/../Littlesun/little-sun-project/classes/Db.php");
 	if (!empty($_POST)){
 		$conn = Db::getConnection();
 		//get the data from post
-		$email = $_POST['email'];
+		$Username = $_POST['Username'];
 		$password = $_POST['password'];
 		
 		//hash password with bcrypt
@@ -14,7 +14,7 @@ include_once(__DIR__ . "/../Littlesun/little-sun-project/classes/Db.php");
 		$password = password_hash($password, PASSWORD_DEFAULT, $options);
 
 		//send the data to the users table
-		$query = "INSERT into account (email, password) VALUES('$email','$password')";
+		$query = "INSERT into account (Username, password) VALUES('$Username','$password')";
 		$result = $conn->query($query);
 		//echo $result;
 		session_start(); //hier krijg je een cookie
@@ -39,13 +39,13 @@ include_once(__DIR__ . "/../Littlesun/little-sun-project/classes/Db.php");
 				<?php  if(isset($error)):?>
 				<div class="form__error">
 					<p>
-						Sorry, we can't log you in with that email address and password. Can you try again?
+						Sorry, we can't log you in with that Username address and password. Can you try again?
 					</p>
 				</div>
 				<?php  endif; ?>
 				<div class="form__field">
-					<label for="Email">Email</label>
-					<input type="text" name="email">
+					<label for="Username">Username</label>
+					<input type="text" name="Username">
 				</div>
 				<div class="form__field">
 					<label for="Password">Password</label>

@@ -4,10 +4,10 @@
 include_once(__DIR__ . "/../Littlesun/classes/Db.php");
 
 
-	function canLogin($pEmail, $Ppassword){
+	function canLogin($pUsername, $Ppassword){
 		$conn = Db::getConnection();
-		$pEmail = $conn->real_escape_string($pEmail);
-		$sql = "SELECT password from account Where email = '$pEmail'";
+		$pUsername = $conn->real_escape_string($pUsername);
+		$sql = "SELECT password from account Where Username = '$pUsername'";
 		$result = $conn->query($sql);
 		$user = $result->fetch_assoc();
 		if(password_verify($Ppassword,$user['password'])){
@@ -22,9 +22,9 @@ include_once(__DIR__ . "/../Littlesun/classes/Db.php");
 
 
 	if( !empty($_POST)){
-		$email = $_POST['email'];
+		$Username = $_POST['Username'];
 		$password = $_POST['password'];
-		if( canLogin($email, $password) ){
+		if( canLogin($Username, $password) ){
 			session_start();
 			$_SESSION['loggedin'] = true;
 			header("Location:index.php");
@@ -50,13 +50,13 @@ include_once(__DIR__ . "/../Littlesun/classes/Db.php");
 				<?php  if(isset($error)):?>
 				<div class="form__error">
 					<p>
-						Sorry, we can't log you in with that email address and password. Can you try again?
+						Sorry, we can't log you in with that Username address and password. Can you try again?
 					</p>
 				</div>
 				<?php  endif; ?>
 				<div class="form__field">
-					<label for="Email">Email</label>
-					<input type="text" name="email">
+					<label for="Username">Username</label>
+					<input type="text" name="Username">
 				</div>
 				<div class="form__field">
 					<label for="Password">Password</label>

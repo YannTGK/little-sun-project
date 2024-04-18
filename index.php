@@ -1,8 +1,12 @@
 <?php 
 
+
 session_start();
 if( !isset($_SESSION['loggedin'])){
   header("Location: login.php");
+}else {
+  $role = $_SESSION['role'];
+  print $role;
 };
 
 
@@ -16,10 +20,9 @@ if( !isset($_SESSION['loggedin'])){
   <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
-  
+
 <div class="header">
 <?php include_once("../Littlesun/classes/nav.php"); ?>
     </div>
-
 </body>
 </html>
