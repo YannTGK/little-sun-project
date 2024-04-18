@@ -13,7 +13,7 @@ if( !isset($_SESSION['loggedin'])){
   <link rel="stylesheet" href="style/style.css">
   <title>Littlesun</title>
   <a style= "color:red" href="./addlocation.php">add location of hub</a>
-  <a style= "color:red" href="./addmanager.php">add a manager</a>
+  <a style= "color:red" href="./addpersonal.php">add a personal</a>
 </head>
 <body>
 <div class="header">

@@ -1,22 +1,22 @@
 <?php
 
-class Manager {
-    private string $name;
+class Personal {
+    private string $username;
     private string $email;
     private string $password;
     private string $profilePicture;
     private string $role;
 
-    public function setName($name){
-        if(empty($name)){
+    public function setName($username){
+        if(empty($username)){
             throw new Exception("Name cannot be empty");
         }  else {
-            $this->name = $name;
+            $this->username = $username;
         }
     }
 
     public function getName() {
-        return $this->name;
+        return $this->username;
     }
 
     public function setEmail($email){
@@ -63,7 +63,7 @@ class Manager {
     public function save(){
         $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
         $statement = $conn->prepare("INSERT INTO account (username, email, password, profilePicture, role) VALUES (:name, :email, :password, :profilePicture, :role)");
-        $statement->bindValue("name", $this->name);
+        $statement->bindValue("name", $this->username);
         $statement->bindValue("email", $this->email);
         $statement->bindValue("password", $this->password);
         $statement->bindValue("profilePicture", $this->profilePicture);
@@ -77,5 +77,12 @@ class Manager {
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;
+    }
+
+    public static function deleteById($personalId) {
+        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $statement = $conn->prepare("DELETE FROM account WHERE id = :id");
+        $statement->bindValue("id", $personalId);
+        return $statement->execute();
     }
 }

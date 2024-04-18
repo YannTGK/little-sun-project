@@ -2,10 +2,10 @@
 
 include_once(__DIR__ . "/classes/personal.php");
 
-if (!empty($_POST['delete_manager'])) {
-    $DeleteManager = $_POST['delete_manager'];
+if (!empty($_POST['delete_personal'])) {
+    $DeletePersonal = $_POST['delete_personal'];
     try {
-        Hub::deleteById($DeleteManager);
+        Personal::deleteById($DeletePersonal);
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -14,27 +14,27 @@ if (!empty($_POST['delete_manager'])) {
 
 if (!empty($_POST)) {
   try {
-    $manager = new Manager();
+    $personal = new Personal();
 
-    $manager->setName($_POST['name']);
-    $manager->setEmail($_POST['email']);
-    $manager->setRole($_POST['role']);
+    $personal->setName($_POST['username']);
+    $personal->setEmail($_POST['email']);
+    $personal->setRole($_POST['role']);
 
     $options = [
         'cost' => 12
     ];
     $hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT, $options);
 
-    $manager->setPassword($hashedPassword);
+    $personal->setPassword($hashedPassword);
 
-    $manager->setProfilePicture($_POST['profilePicture']);
-    $manager->save();
+    $personal->setProfilePicture($_POST['profilePicture']);
+    $personal->save();
 
   } catch (Exception $e) {
     $error = $e->getMessage();
   }
 }
-$allManagers = Manager::getAll();
+$allPersonals = Personal::getAll();
 
 ?>
 <!DOCTYPE html>
@@ -44,7 +44,7 @@ $allManagers = Manager::getAll();
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>addManager</title>
+  <title>addPersonal</title>
 </head>
 <a style="color: red" href="./index.php">GO HOME</a>
 
@@ -53,8 +53,8 @@ $allManagers = Manager::getAll();
     <div><?php echo $error ?></div>
   <?php endif; ?>
   <form action="" method="post">
-      <label for="name">Name</label>
-      <input type="text" name="name" id="name" />
+      <label for="username">username</label>
+      <input type="text" name="username" id="username" />
       <label for="email">Email</label>
       <input type="text" name="email" id="email" />
       <label for="password">Password</label>
@@ -63,14 +63,14 @@ $allManagers = Manager::getAll();
       <input type="text" name="profilePicture" id="profilePicture" />
       <label for="role">Role</label> 
       <input type="text" name="role" id="role" />
-      <input type="submit" value="Add Manager" />
+      <input type="submit" value="Add Personal" />
     </form>
 
-    <?php foreach ($allManagers as $manager) : ?>
+    <?php foreach ($allPersonals as $personal) : ?>
         <div>
-            <?php echo htmlspecialchars($manager['username']) . " " . htmlspecialchars($manager['email']); ?>
+            <?php echo htmlspecialchars($personal['username']) . " " . htmlspecialchars($personal['email']); ?>
             <form action="" method="post" style="display: inline;">
-                <input type="hidden" name="delete_hub" value="<?php echo $manager['id']; ?>">
+                <input type="hidden" name="delete_personal" value="<?php echo $personal['id']; ?>">
                 <input type="submit" value="Delete">
             </form>
         </div>
