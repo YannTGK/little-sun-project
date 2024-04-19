@@ -1,5 +1,5 @@
 <?php 
-
+include_once(__DIR__ . "/../Littlesun/classes/Db.php");
 session_start();
 if( !isset($_SESSION['loggedin'])){
   header("Location: login.php");

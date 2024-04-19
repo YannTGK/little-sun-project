@@ -6,7 +6,7 @@ class Personal {
     private string $password;
     private string $profilePicture;
     private string $role;
-    private string $hubname; // Voeg het attribuut hubname toe
+    private string $hubname; 
 
     public function setName($username){
         if(empty($username)){
@@ -30,6 +30,44 @@ class Personal {
 
     public function getEmail() {
         return $this->email;
+    }
+
+    public static function getById($id) {
+        $conn = new PDO('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $statement = $conn->prepare("SELECT * FROM account WHERE id = :id");
+        $statement->bindValue(":id", $id);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            throw new Exception("Personal not found.");
+        }
+        $personal = new Personal();
+        $personal->setName($result['username']);
+        $personal->setEmail($result['email']);
+        $personal->setPassword($result['password']);
+        $personal->setProfilePicture($result['profilePicture']);
+        $personal->setRole($result['role']);
+        $personal->setHubname($result['hubname']);
+        return $personal;
+    }
+
+    public static function getByUsername($username) {
+        $conn = new PDO('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $statement = $conn->prepare("SELECT * FROM account WHERE username = :username");
+        $statement->bindValue(":username", $username);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            return null; 
+        }
+        $personal = new Personal();
+        $personal->setName($result['username']);
+        $personal->setEmail($result['email']);
+        $personal->setPassword($result['password']);
+        $personal->setProfilePicture($result['profilePicture']);
+        $personal->setRole($result['role']);
+        $personal->setHubname($result['hubname']);
+        return $personal;
     }
 
     public static function updatePasswordById($id, $hashedPassword) {
@@ -68,25 +106,34 @@ class Personal {
         return $this->role;
     }
 
-    // Methode om de hubnaam in te stellen
+
     public function setHubname($hubname) {
         $this->hubname = $hubname;
     }
 
-    // Methode om de hubnaam op te halen
+
     public function getHubname() {
         return $this->hubname;
     }
 
+
     public function save(){
         $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
-        $statement = $conn->prepare("INSERT INTO account (username, email, password, profilePicture, role, hubname) VALUES (:name, :email, :password, :profilePicture, :role, :hubname)");
-        $statement->bindValue("name", $this->username);
-        $statement->bindValue("email", $this->email);
-        $statement->bindValue("password", $this->password);
-        $statement->bindValue("profilePicture", $this->profilePicture);
-        $statement->bindValue("role", $this->role);
-        $statement->bindValue("hubname", $this->hubname); // Voeg hubname toe aan de query
+
+        $existingUser = self::getByUsername($this->username);
+        if ($existingUser) {
+
+            $statement = $conn->prepare("UPDATE account SET email = :email, password = :password, profilePicture = :profilePicture, role = :role, hubname = :hubname WHERE username = :username");
+        } else {
+
+            $statement = $conn->prepare("INSERT INTO account (username, email, password, profilePicture, role, hubname) VALUES (:username, :email, :password, :profilePicture, :role, :hubname)");
+        }
+        $statement->bindValue(":username", $this->username);
+        $statement->bindValue(":email", $this->email);
+        $statement->bindValue(":password", $this->password);
+        $statement->bindValue(":profilePicture", $this->profilePicture);
+        $statement->bindValue(":role", $this->role);
+        $statement->bindValue(":hubname", $this->hubname);
         return $statement->execute();
     }
 
@@ -101,9 +148,8 @@ class Personal {
     public static function deleteById($personalId) {
         $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
         $statement = $conn->prepare("DELETE FROM account WHERE id = :id");
-        $statement->bindValue("id", $personalId);
+        $statement->bindValue(":id", $personalId);
         return $statement->execute();
     }
 }
 
-?>
