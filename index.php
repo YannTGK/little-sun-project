@@ -17,7 +17,7 @@ if(isset($_SESSION['role'])){
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="styles/style.css">
   <title>Littlesun</title>
   <a style= "color:red" href="./addlocation.php">add location of hub</a>
   <a style= "color:red" href="./addpersonal.php">add a personal</a>
