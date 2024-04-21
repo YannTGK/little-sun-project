@@ -47,7 +47,7 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
 
     $personal->setPassword($hashedPassword);
 
-    // Handle file upload
+
     if (!empty($_FILES['profilePictureFile']['name'])) {
       $targetDir = "uploads/";
       $targetFile = $targetDir . basename($_FILES['profilePictureFile']['name']);
