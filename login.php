@@ -36,17 +36,24 @@ if(!empty($_POST)){
 <head>
     <meta charset="UTF-8">
     <title>LittleSun</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="styles/loginscreen.css">
 </head>
 <body>
+    <div class="welcome">
+        <h1>welcome to Little Sun</h1>
+        <p>where African agriculture is given structure </p>
+        <img src="../Littlesun/images/logo.png" alt="">
+    </div>
 <div class="login">
     <div class="form form--login">
         <form action="" method="post">
-            <h2 form__title>Sign In</h2>
+            <h2 form__title>Account Login</h2>
+            <p>If you are already a member you can login with your email address and password.</p>
 
             <?php if(isset($error)):?>
                 <div class="form__error">
-                    <p>
+                    <p style="color: red;">
                         Sorry, we can't log you in with that Username address and password. Can you try again?
                     </p>
                 </div>
@@ -60,8 +67,8 @@ if(!empty($_POST)){
                 <input type="password" name="password">
             </div>
 
-            <div class="form__field">
-                <input type="submit" value="Sign in" class="btn btn--primary">
+            <div class="btn">
+                <input type="submit" value="Login" class="btn btn--primary">
             </div>
         </form>
     </div>
