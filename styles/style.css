@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+header {
+    background-color: black;
+    max-width: 150px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding-top: 40px;
+}
+
+.navItem {
+    width: 24px;
+    height: 41px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    padding: 25px 100px;
+    
+}
+
+.logo {
+    max-width: 130px;
+    background-image: url(../images/logo.png);
+    background-size: auto;
+}
+
+.icon1 {
+    background-image: url(../images/active_home.png);
+    background-color: white;
+    
+}
+
+.icon2 {
+    background-image: url(../images/not_active_profile.png);
+}
+
+.icon3 {
+    background-image: url(../images/not_active_calendar.png);
+}
+
+.icon4 {
+    background-image: url(../images/not_active_settings.png);
+}
+
+header a {
+    color: white;
+    font-size: 16px;
+}
+
+.screen {
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 24px;
+    margin-left: 32px;
+}
+
+h1, h2, h3, p, a {
+    font-family: sans-serif;
+}
+
+h1 {
+    text-transform: uppercase;
+}
+
+h2, h3 {
+ 
+    margin: 0px;
+}
+
+
+a.YButton {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+  
+}
+
+.YButton {
+    padding: 8px 32px;
+    background-color: yellow;
+    border-radius: 12px;
+ 
+    
+}
+
+.editLink {
+    display: inline-block; 
+    margin-top: 8px; 
+}
