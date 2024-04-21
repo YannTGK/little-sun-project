@@ -47,7 +47,40 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
 
     $personal->setPassword($hashedPassword);
 
-    $personal->setProfilePicture($_POST['profilePicture']);
+    // Handle file upload
+    if (!empty($_FILES['profilePictureFile']['name'])) {
+      $targetDir = "uploads/";
+      $targetFile = $targetDir . basename($_FILES['profilePictureFile']['name']);
+      $uploadOk = 1;
+      $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+      $check = getimagesize($_FILES['profilePictureFile']['tmp_name']);
+      if ($check !== false) {
+        $uploadOk = 1;
+      } else {
+        throw new Exception("File is not an image.");
+      }
+
+      if ($_FILES['profilePictureFile']['size'] > 500000) {
+        throw new Exception("Sorry, your file is too large.");
+      }
+
+      if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+        throw new Exception("Sorry, only JPG, JPEG, PNG & GIF files are allowed.");
+      }
+
+      if ($uploadOk == 0) {
+        throw new Exception("Sorry, your file was not uploaded.");
+      } else {
+        if (move_uploaded_file($_FILES['profilePictureFile']['tmp_name'], $targetFile)) {
+          $profilePicturePath = $targetFile;
+        } else {
+          throw new Exception("Sorry, there was an error uploading your file.");
+        }
+      }
+
+      $personal->setProfilePicture($profilePicturePath);
+    }
 
     $personal->setHubname($_POST['hubname']);
 
@@ -76,15 +109,15 @@ $allHubs = Hub::getAll();
   <?php if (isset($error)) : ?>
     <div><?php echo $error ?></div>
   <?php endif; ?>
-  <form action="" method="post">
+  <form action="" method="post" enctype="multipart/form-data">
     <label for="username">Username</label>
     <input type="text" name="username" id="username" />
     <label for="email">Email</label>
     <input type="text" name="email" id="email" />
     <label for="password">Password</label>
     <input type="password" name="password" id="password" />
-    <label for="profilePicture">Profile Picture</label>
-    <input type="text" name="profilePicture" id="profilePicture" />
+    <label for="profilePictureFile">Profile Picture</label>
+    <input type="file" name="profilePictureFile" id="profilePictureFile" />
     <label for="role">Role</label>
     <select name="role" id="role">
       <option value="Manager">Manager</option>
@@ -112,6 +145,11 @@ $allHubs = Hub::getAll();
   <?php foreach ($allPersonals as $personal) : ?>
     <div>
       <?php echo "ID: " . $personal['id'] . " - " . htmlspecialchars($personal['username']) . " " . htmlspecialchars($personal['email']); ?>
+      <?php
+      if (!empty($personal['profilePicture'])) {
+        echo '<img src="' . $personal['profilePicture'] . '" alt="Profile Picture" style="width: 100px; height: 100px; margin-left: 10px;">';
+      }
+      ?>
       <form action="" method="post" style="display: inline;">
         <input type="hidden" name="delete_personal" value="<?php echo $personal['id']; ?>">
         <input type="submit" value="Delete">
