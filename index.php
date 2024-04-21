@@ -17,7 +17,6 @@ if(!isset($_SESSION['loggedin'])){
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/home.css">
