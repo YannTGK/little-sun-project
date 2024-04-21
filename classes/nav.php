@@ -1,8 +1,23 @@
-<a href="index.html"><div class="headerItems headerItem1"></div></a>
-        <a href="index.html"><div class="headerItems headerItem2 active"></div></a>
-        <a href="profile/index.html"><div class="headerItems headerItem3"></div></a>
-        <a href="calendar/index.html"><div class="headerItems headerItem4"></div></a>
-        <a href="settings/index.html"><div class="headerItems headerItem5"></div></a>
-        <a href="logout.php"><div class="headerItems headerItem6">Logout</div></a>
+<header>
+        
+        <a href="index.php" class="navItem logo">
+               
 
+        </a>
+        <a href="index.php" class="navItem icon1">
+               
+
+        </a>
+        <a href="profile.php" class="navItem icon2">
+
+        </a>
+        <a href="calendar.php" class="navItem icon3">
+
+        </a>
+        <a href="settings.php" class="navItem icon4">
+
+        </a>
+
+        <a href="login.php">Logout</a>
+</header>
 
