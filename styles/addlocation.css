@@ -1,0 +1,12 @@
+.holder {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 32px;
+}
+
+.hubImg {
+    width: auto;
+    height: auto;
+    background-color: red;
+}
