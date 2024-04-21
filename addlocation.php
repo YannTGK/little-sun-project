@@ -69,46 +69,40 @@ $allHubs = Hub::getAll();
                         <input type="text" name="hublocation" id="hublocation" />
                     </div>
                     <span class="editLink">
-                    <input type="submit" value="Add hub" class="formButton"/>
+                        <input type="submit" value="Add hub" class="formButton"/>
                     </span>
                 </form>
                 <div class="hubImg">
-                    
+                    &nbsp;
                 </div>
 
             </div>
 
-            <form action="" method="post" class="formHolder">
-                <div class="form">
-                    <label for="hubname">Hubname</label>
-                    <input type="text" name="hubname" id="hubname" />
-                </div>
-                <div class="form">
-                    <label for="hublocation">Hublocation</label>
-                    <input type="text" name="hublocation" id="hublocation" />
-                </div>
-                <span class="editLink">
-                <input type="submit" value="Add hub" class="formButton"/>
-                </span>
-                
-            </form>
+            <div class="right">
+                <h2>Current Locations</h2>
+                <div class="overflow">
 
-            <?php foreach ($allHubs as $hub) : ?>
-                <div>
-                    <?php echo htmlspecialchars($hub['hubname']) . " " . htmlspecialchars($hub['hublocation']); ?>
-                    <form action="" method="post" style="display: inline;">
-                        <input type="hidden" name="delete_hub" value="<?php echo $hub['id']; ?>">
-                        <input type="submit" value="Delete">
-                    </form>
+                    <?php foreach ($allHubs as $hub) : ?>
+                        <div class="displayHubs">
+                            <div class="info">
+                                <h3>Hub: <?php echo htmlspecialchars($hub['hubname']); ?></h3>
+                                <p>Adress: <?php echo htmlspecialchars($hub['hublocation']); ?></p>
+                            </div>
+                           
+                            <form action="" method="post">
+                                <input type="hidden" name="delete_hub" value="<?php echo $hub['id']; ?>">
+                                <span class="editLink">
+                                    <input type="submit" value="Delete" class="formButton2">
+                                </span>
+                                
+                            </form>
+                        </div>
+                    <?php endforeach ?>
                 </div>
-            <?php endforeach ?>
+
+            </div>
         </div>
-        
-       
-
-        
     </div>
-   
 </body>
 
 </html>

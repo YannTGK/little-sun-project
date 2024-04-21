@@ -75,11 +75,14 @@ h1 {
     text-transform: uppercase;
 }
 
-h2, h3 {
+h2, h3, p {
  
     margin: 0px;
 }
 
+h2 {
+    font-weight: normal;
+}
 
 a.YButton {
     color: black;
@@ -101,6 +104,22 @@ a.YButton {
     margin-top: 8px; 
 }
 
+.formButton {
+    border: none;
+    padding: 8px 32px;
+    border-radius: 12px;
+    background-color: yellow;
+    font-weight: bold;
+}
+
+.formButton2 {
+    border: none;
+    padding: 8px 32px;
+    border-radius: 12px;
+    background-color: black;
+    font-weight: bold;
+    color: white;
+}
 .title {
     display: flex;
     justify-content:space-between;
@@ -133,10 +152,3 @@ a.YButton {
     width: 350px;
 }
 
-.formButton {
-    border: none;
-    padding: 8px 32px;
-    border-radius: 12px;
-    background-color: yellow;
-    font-weight: bold;
-}

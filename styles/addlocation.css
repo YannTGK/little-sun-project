@@ -2,11 +2,46 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    gap: 64px;
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
     gap: 32px;
+           
 }
 
 .hubImg {
-    width: auto;
-    height: auto;
-    background-color: red;
+    width: 350px;
+    height: 200px;
+    background-image: url(../images/Small_Suns.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    
+}
+
+.overflow {
+    overflow: auto;
+    height: 350px;
+    margin-top: 8px;
+}
+.displayHubs {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 500px;
+    margin-bottom: 24px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
 }
