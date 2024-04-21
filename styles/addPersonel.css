@@ -1,0 +1,54 @@
+.selectGroup {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    
+}
+
+.holder {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 64px;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+}
+.grouping {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+}
+
+.allPersonel {
+    height: 225px;
+    overflow: auto;
+}
+
+.onePersonel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+
+    justify-content: space-between;
+    width: 500px;
+}
+
+.onePersonalInfo {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+}
+
+.personalImg {
+    width: 50px; 
+    height: 50px; 
+    margin-left: 10px;
+}

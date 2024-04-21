@@ -102,60 +102,133 @@ $allHubs = Hub::getAll();
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>addPersonal</title>
+  <link rel="stylesheet" href="styles/normalize.css">
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/addPersonel.css">
 </head>
 
 <body>
-  <a style="color: red" href="./index.php">GO HOME</a>
-  <?php if (isset($error)) : ?>
-    <div><?php echo $error ?></div>
-  <?php endif; ?>
-  <form action="" method="post" enctype="multipart/form-data">
-    <label for="username">Username</label>
-    <input type="text" name="username" id="username" />
-    <label for="email">Email</label>
-    <input type="text" name="email" id="email" />
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-    <label for="profilePictureFile">Profile Picture</label>
-    <input type="file" name="profilePictureFile" id="profilePictureFile" />
-    <label for="role">Role</label>
-    <select name="role" id="role">
-      <option value="Manager">Manager</option>
-      <option value="Personal">Personal</option>
-    </select>
-    <label for="hubname">Hubname</label>
-    <select name="hubname" id="hubname">
-      <?php foreach ($allHubs as $hub) : ?>
-        <option value="<?php echo $hub['hubname']; ?>"><?php echo $hub['hubname']; ?></option>
-      <?php endforeach; ?>
-    </select>
-    <input type="submit" value="Add Personal" />
-  </form>
+  <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
-  <h2>Update Password</h2>
-  <form action="" method="post">
-    <label for="personal_id">Personal ID</label>
-    <input type="text" name="personal_id" id="personal_id" />
-    <label for="new_password">New Password</label>
-    <input type="password" name="new_password" id="new_password" />
-    <input type="submit" name="update_password" value="Update Password" />
-  </form>
-
-  <h2>All Personals</h2>
-  <?php foreach ($allPersonals as $personal) : ?>
-    <div>
-      <?php echo "ID: " . $personal['id'] . " - " . htmlspecialchars($personal['username']) . " " . htmlspecialchars($personal['email']); ?>
-      <?php
-      if (!empty($personal['profilePicture'])) {
-        echo '<img src="' . $personal['profilePicture'] . '" alt="Profile Picture" style="width: 100px; height: 100px; margin-left: 10px;">';
-      }
-      ?>
-      <form action="" method="post" style="display: inline;">
-        <input type="hidden" name="delete_personal" value="<?php echo $personal['id']; ?>">
-        <input type="submit" value="Delete">
-      </form>
+  <div class="screen">
+    <div class="title">
+      <h1>Add Personnel</h1>
+      <a class="kruis" href="./index.php"></a>
     </div>
-  <?php endforeach ?>
+
+    <div class="holder">
+      
+      <div class="left">
+        <?php if (isset($error)) : ?>
+          <div><?php echo $error ?></div>
+        <?php endif; ?>
+        <form action="" method="post" enctype="multipart/form-data" class="formHolder">
+          <div class="form">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" />
+          </div>
+
+          <div class="form">
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" />
+          </div>
+          
+          <div class="form">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" />
+          </div>
+
+          <div class="form">
+            <label for="profilePictureFile">Profile Picture</label>
+            <input type="file" name="profilePictureFile" id="profilePictureFile" />
+          </div>
+        
+          <div class="selectGroup">
+            <div class="form">
+              <label for="role">Role</label>
+              <select name="role" id="role">
+                <option value="Manager">Manager</option>
+                <option value="Personal">Personal</option>
+              </select>
+            </div>
+
+            <div class="form">
+              <label for="hubname">Hubname</label>
+              <select name="hubname" id="hubname">
+                <?php foreach ($allHubs as $hub) : ?>
+                  <option value="<?php echo $hub['hubname']; ?>"><?php echo $hub['hubname']; ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+          </div>
+          
+          <span class="editLink">
+            <input type="submit" value="Add Personal" class="formButton" />
+          </span>
+          
+        </form>
+      </div>
+
+      <div class="right">
+        <div class="updatePassword grouping">
+          <h2>Update Password</h2>
+          <form action="" method="post" class="formHolder">
+            <div class="form">
+              <label for="personal_id">Personal ID</label>
+              <input type="text" name="personal_id" id="personal_id" />
+            </div>
+
+            <div class="form">
+              <label for="new_password">New Password</label>
+              <input type="password" name="new_password" id="new_password" />
+            </div>
+            <div class="editLink">
+              <input type="submit" name="update_password" value="Update Password" class="formButton" />
+            </div>
+          </form>
+        </div>
+        
+        <div class="allPersonel grouping">
+          <!-- not enough space to place
+            <h2>All Personals</h2>
+          -->
+          <?php foreach ($allPersonals as $personal) : ?>
+            <div class="onePersonel">
+              <div class="onePersonalInfo">
+                <?php
+                if (!empty($personal['profilePicture'])) {
+                  echo '<img src="' . $personal['profilePicture'] . '" alt="Profile Picture" class="personalImg">';
+                }
+                ?>
+                <span>
+                  <?php echo "ID: " . $personal['id'] . " - " . htmlspecialchars($personal['username']) ?> <br><?php echo htmlspecialchars($personal['email']); ?>
+                </span>
+              </div>
+              
+              
+              <form action="" method="post">
+                <input type="hidden" name="delete_personal" value="<?php echo $personal['id']; ?>">
+                <div class="editLink">
+                  <input type="submit" value="Delete" class="formButton2">
+                </div>
+                
+              </form>
+            </div>
+          <?php endforeach ?>
+        </div>
+        
+      </div>
+    </div>
+    
+    
+
+    
+
+
+
+  </div>
+
+
 </body>
 
 </html>

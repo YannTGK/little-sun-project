@@ -67,7 +67,7 @@ header a {
     margin-left: 32px;
 }
 
-h1, h2, h3, p, a, label, input {
+h1, h2, h3, p, a, label, input, span {
     font-family: sans-serif;
 }
 
@@ -95,13 +95,13 @@ a.YButton {
     padding: 8px 32px;
     background-color: yellow;
     border-radius: 12px;
+    margin-top: 8px;
     
     
 }
 
 .editLink {
     display: inline-block; 
-    margin-top: 8px; 
 }
 
 .formButton {
@@ -142,6 +142,7 @@ a.YButton {
     gap: 8px;
 }
 
+
 .formHolder {
     display: flex;
     flex-direction: column;
@@ -152,3 +153,6 @@ a.YButton {
     width: 350px;
 }
 
+.form select {
+    width: 170px;
+}

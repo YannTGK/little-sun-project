@@ -1,17 +1,9 @@
 body {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
     align-items: center; 
     height: 100vh; 
-    margin-left: -5%;
   
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 50%; 
 }
 
 .welcome {
@@ -26,41 +18,40 @@ body {
     flex-direction: column;
     justify-content: center; 
     align-items: center; 
+    gap: 40px;
 }
 
-
-.btn .btn--primary {
-    background-color: #FFDD00;
-    border: 0;
-    border-radius: 10px;
-    font-size: 16px;
-    padding: 18px 80px;
-}
-
-.btn  {
-    text-align: center;
-}
-
-
-.form__field {
+.Big {
     display: flex;
     flex-direction: column;
-    width: 60%;
-    padding: 20px; 
+    gap: 8px;
 }
 
-.form__field input {
-    height: 30px;
+.Big h1 {
+    margin: 0;
 }
 
-.login{
-    padding-left: 20px;
+.BigImg {
+    width: 250px;
 }
 
-h2 {
-    text-align: center;
+.loginHolder {
+   display: flex;
+   flex-direction: column;
+   gap: 32px;
+   margin-left: 32px;
 }
 
-p{
-    margin-left: 20px;
+.loginInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 350px;
 }
+
+.introLogin {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
