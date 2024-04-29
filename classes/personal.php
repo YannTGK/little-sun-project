@@ -152,4 +152,3 @@ class Personal {
         return $statement->execute();
     }
 }
-

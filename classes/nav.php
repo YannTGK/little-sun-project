@@ -11,7 +11,7 @@
         <a href="profile.php" class="navItem icon2">
 
         </a>
-        <a href="calendar.php" class="navItem icon3">
+        <a href="taskType.php" class="navItem icon3">
 
         </a>
         <a href="settings.php" class="navItem icon4">

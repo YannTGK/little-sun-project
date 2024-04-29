@@ -1,25 +1,24 @@
 <?php
 
-include_once(__DIR__ . "/classes/add.php");
+include_once(__DIR__ . "/classes/createTaskType.php");
 
 
-if (!empty($_POST['delete_hub'])) {
-    $DeleteHub = $_POST['delete_hub'];
+if (!empty($_POST['delete_task'])) {
+    $DeleteTask = $_POST['delete_task'];
     try {
 
-        Hub::deleteById($DeleteHub);
+        task::deleteById($DeleteTask);
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
 }
 
-if (!empty($_POST['hubname']) && !empty($_POST['hublocation'])) {
+if (!empty($_POST['task'])) {
     try {
-        $hub = new Hub();
+        $task = new Task();
 
-        $hub->setHubname($_POST['hubname']);
-        $hub->setHublocation($_POST['hublocation']);
-        $hub->save();
+        $task->setTask($_POST['task']);
+        $task->save();
 
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -27,7 +26,7 @@ if (!empty($_POST['hubname']) && !empty($_POST['hublocation'])) {
 }
 
 
-$allHubs = Hub::getAll();
+$allTasks = Task::getAll();
 
 ?>
 <!DOCTYPE html>
@@ -37,7 +36,7 @@ $allHubs = Hub::getAll();
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>addHub</title>
+    <title>addTask</title>
     <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/addlocation.css">
@@ -49,7 +48,7 @@ $allHubs = Hub::getAll();
 
     <div class="screen">
         <div class="title">
-            <h1>Add Hub Location</h1>
+            <h1>Add a task</h1>
             <a class="kruis" href="./index.php"></a>
         </div>
         <?php if (isset($error)) : ?>
@@ -61,36 +60,27 @@ $allHubs = Hub::getAll();
             <div class="left">
                 <form action="" method="post" class="formHolder">
                     <div class="form">
-                        <label for="hubname">Hubname</label>
-                        <input type="text" name="hubname" id="hubname" />
-                    </div>
-                    <div class="form">
-                        <label for="hublocation">Hublocation</label>
-                        <input type="text" name="hublocation" id="hublocation" />
+                        <label for="task">task</label>
+                        <input type="text" name="task" id="task" />
                     </div>
                     <span class="editLink">
-                        <input type="submit" value="Add hub" class="formButton"/>
+                        <input type="submit" value="Add TaskType" class="formButton"/>
                     </span>
                 </form>
-                <div class="hubImg">
-                    &nbsp;
-                </div>
 
             </div>
 
             <div class="right">
-                <h2>Current Locations</h2>
                 <div class="overflow">
 
-                    <?php foreach ($allHubs as $hub) : ?>
+                    <?php foreach ($allTasks as $task) : ?>
                         <div class="displayHubs">
                             <div class="info">
-                                <h3>Hub: <?php echo htmlspecialchars($hub['hubname']); ?></h3>
-                                <p>Adress: <?php echo htmlspecialchars($hub['hublocation']); ?></p>
+                                <h3>Task: <?php echo htmlspecialchars($task['TaskType']); ?></h3>
                             </div>
                            
                             <form action="" method="post">
-                                <input type="hidden" name="delete_hub" value="<?php echo $hub['id']; ?>">
+                                <input type="hidden" name="delete_task" value="<?php echo $task['id']; ?>">
                                 <span class="editLink">
                                     <input type="submit" value="Delete" class="formButton2">
                                 </span>

@@ -6,12 +6,13 @@ if(!isset($_SESSION['loggedin'])){
 }
 
 
-/*if(isset($_SESSION['role'])){
-    $role = $_SESSION['role'];
-    echo "Rol: " . $role;
+if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    $isAdmin = true;
 } else {
-    echo "Rol niet gevonden in sessie.";
-}*/
+    $isAdmin = false;
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,6 +38,7 @@ if(!isset($_SESSION['loggedin'])){
         
         <div class="holder">
             <div class="articles">
+                <?php if($isAdmin): ?>
                 <div class="article">
                     <h2>Add Hub Location</h2>
                     <p>Expand your agricultural empire with ease! With this menu, you can effortlessly add and remove locations, allowing farmers to work anywhere the fertile soil calls them. </p>
@@ -45,6 +47,7 @@ if(!isset($_SESSION['loggedin'])){
                     </span>
                     
                 </div>
+                <?php endif; ?>
                 <div class="article">
                     <h2>Add Pesonel</h2>
                     <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personnel, ensuring your team is optimized wherever the job takes them.</p>
