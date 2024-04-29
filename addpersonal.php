@@ -2,6 +2,10 @@
 
 include_once(__DIR__ . "/classes/personal.php");
 include_once(__DIR__ . "/classes/add.php");
+include_once(__DIR__ . "/classes/createTaskType.php");
+
+
+
 
 if (!empty($_POST['delete_personal'])) {
   $DeletePersonal = $_POST['delete_personal'];
@@ -92,6 +96,7 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
 
 $allPersonals = Personal::getAll();
 $allHubs = Hub::getAll();
+$allTasks = task::getAll();
 
 ?>
 <!DOCTYPE html>
@@ -152,6 +157,18 @@ $allHubs = Hub::getAll();
               </select>
             </div>
 
+            <div class="selectGroup">
+  <div class="form">
+    <label>TaskType</label>
+    <?php foreach ($allTasks as $task) : ?>
+      <div>
+        <input type="checkbox" name="tasks[]" value="<?php echo $task['TaskType']; ?>">
+        <label><?php echo $task['TaskType']; ?></label>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</div>
+
             <div class="form">
               <label for="hubname">Hubname</label>
               <select name="hubname" id="hubname">
@@ -189,9 +206,7 @@ $allHubs = Hub::getAll();
         </div>
         
         <div class="allPersonel grouping">
-          <!-- not enough space to place
-            <h2>All Personals</h2>
-          -->
+
           <?php foreach ($allPersonals as $personal) : ?>
             <div class="onePersonel">
               <div class="onePersonalInfo">
