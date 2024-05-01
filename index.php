@@ -61,7 +61,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                     <span class="editLinks">
                         <a class="YButton" href="./addpersonal.php">Edit</a>
                     </span>
-                  
+                  <a href="vacations.php">Check worker vacations</a>
                 </div>
 
 

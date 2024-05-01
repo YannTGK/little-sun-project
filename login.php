@@ -5,7 +5,7 @@ include_once(__DIR__ . "/../Littlesun/classes/Db.php");
 function canLogin($pUsername, $Ppassword){
     $conn = Db::getConnection();
     $pUsername = $conn->real_escape_string($pUsername);
-    $sql = "SELECT password, role FROM account WHERE Username = '$pUsername'";
+    $sql = "SELECT password, role, username, id FROM account WHERE Username = '$pUsername'";
     $result = $conn->query($sql);
     $user = $result->fetch_assoc();
     if(password_verify($Ppassword, $user['password'])){
@@ -22,7 +22,9 @@ if(!empty($_POST)){
     if($user){
         session_start();
         $_SESSION['loggedin'] = true;
-        $_SESSION['role'] = $user['role']; 
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['id'] = $user['id'];
         header("Location:index.php");
         exit; 
     } else {
