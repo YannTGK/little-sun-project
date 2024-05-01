@@ -12,6 +12,12 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     $isAdmin = false;
 }
 
+if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
+    $isManager = true;
+} else {
+    $isManager = false;
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -35,7 +41,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
             echo "Rol niet gevonden in sessie.";
             } ?> pannel
         </h1>
-        
+        <a href="./workershub.php">workershub</a>
         <div class="holder">
             <div class="articles">
                 <?php if($isAdmin): ?>
@@ -49,6 +55,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
                 </div>
                 <?php endif; ?>
                 <div class="article">
+                <?php if($isAdmin || $isManager): ?>
                     <h2>Add Pesonel</h2>
                     <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personnel, ensuring your team is optimized wherever the job takes them.</p>
                     <span class="editLinks">
@@ -59,7 +66,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
 
 
             </div>
-
+            <?php endif; ?>
             <div class="homeImg">
                 &nbsp;
             </div>
