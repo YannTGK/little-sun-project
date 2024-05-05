@@ -1,5 +1,11 @@
-.homeActive {
-    background-color: orange;
+.homeActive, .homeActive p {
+    background-color: white;
+    color: #FFDD00;
+}
+
+.navItems .home {
+    background-image: url(../images/active_home.svg);
+    
 }
 
 h1 {

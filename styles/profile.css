@@ -1,5 +1,10 @@
-.profileActive {
-    background-color: orange;
+.profileActive, .profileActive p {
+    background-color: white;
+    color:  #FFDD00;
+}
+
+.navItems .profile {
+    background-image: url(../images/active_profile.svg);
     
 }
 
