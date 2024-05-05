@@ -28,8 +28,7 @@ if (!empty($_POST['task'])) {
 
 $allTasks = Task::getAll();
 
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -39,7 +38,7 @@ $allTasks = Task::getAll();
     <title>addTask</title>
     <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/addlocation.css">
+    <link rel="stylesheet" href="styles/tasks.css">
 </head>
 
 
@@ -49,7 +48,7 @@ $allTasks = Task::getAll();
     <div class="screen">
         <div class="title">
             <h1>Add a task</h1>
-            <a class="kruis" href="./index.php"></a>
+            <a class="kruis" href="./calendar.php"></a>
         </div>
         <?php if (isset($error)) : ?>
             <div><?php echo $error ?></div>
@@ -60,7 +59,7 @@ $allTasks = Task::getAll();
             <div class="left">
                 <form action="" method="post" class="formHolder">
                     <div class="form">
-                        <label for="task">task</label>
+                        <label for="task">Task name</label>
                         <input type="text" name="task" id="task" />
                     </div>
                     <span class="editLink">

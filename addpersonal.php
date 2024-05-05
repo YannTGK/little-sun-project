@@ -145,28 +145,30 @@ $allTasks = Task::getAll();
                             </select>
                         </div>
 
-                        <div class="selectGroup">
-                            <div class="form">
-                                <label>TaskType</label>
-                                <?php foreach ($allTasks as $task) : ?>
-                                    <div>
-                                        <input type="checkbox" name="tasks[]" value="<?php echo $task['id']; ?>"> 
-                                        <label><?php echo $task['TaskType']; ?></label>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-
+                        
                         <div class="form">
                             <label for="hubname">Hubname</label>
                             <select name="hubname" id="hubname">
                                 <?php foreach ($allHubs as $hub) : ?>
                                     <option value="<?php echo $hub['hubname']; ?>"><?php echo $hub['hubname']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-
+                        
+                        <div class="selectGroup">
+                            <div class="tasktype">
+                                <label>Personnel task(s)</label>
+                                <div class="taskItems">
+                                    <?php foreach ($allTasks as $task) : ?>
+                                        <div class="taskItem">
+                                            <input type="checkbox" name="tasks[]" value="<?php echo $task['id']; ?>"> 
+                                            <label><?php echo $task['TaskType']; ?></label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
                     <span class="editLink">
                         <input type="submit" value="Add Personal" class="formButton" />
                     </span>

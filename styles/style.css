@@ -45,11 +45,6 @@ header {
     padding: 30px 78px;
 }
 
-.active {
-    background-color: orange;
-    
-}
-
 .navItems .img {
     width: 35px ;
     height: 35px;

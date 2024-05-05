@@ -1,4 +1,4 @@
-.homeActive {
+.calendarActive {
     background-color: orange;
     
 }
@@ -26,10 +26,11 @@
     margin-bottom: 32px;
 }
 
-.homeImg {
+.calendarImg {
     width: 100%;
-    background-image: url(../images/Jongen_Holding.webp);
+    background-image: url(../images/holderForCalendar.webp);
     background-position: center;
     background-repeat: no-repeat;
+    background-size: cover;
 }
 

@@ -26,7 +26,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
   <meta charset="UTF-8">
   <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/style.css">
-  <link rel="stylesheet" href="styles/home.css">
+  <link rel="stylesheet" href="styles/calendar.css">
   <title>Littlesun</title>
 </head>
 <body>
@@ -39,50 +39,38 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
             echo $role;
             } else {
             echo "Rol niet gevonden in sessie.";
-            } ?> pannel
+            } ?> Calendar
         </h1>
         <div class="holder">
             <div class="articles">
-                <?php if($isAdmin): ?>
-                    <div class="article">
-                        <h2>Add Hub Location</h2>
-                        <p>Expand your agricultural empire with ease! With this menu, you can effortlessly add and remove locations, allowing farmers to work anywhere the fertile soil calls them. </p>
-                        <span class="editLinks">
-                            <a class="YButton" href="./addlocation.php">Edit</a>
-                        </span>
-                        
-                    </div>
-                <?php endif; ?>
-
+             
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
                     
-                        <h2>Add Personnel</h2>
-                        <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personnel, ensuring your team is optimized wherever the job takes them.</p>
+                        <h2>Manage Task</h2>
+                        <p>Add and delete possible tasks for your employees. You can streemline what has to be done by everybody. Make sure no tasks are left out. After this, add the task to the specific employee</p>
                         <span class="editLinks">
-                            <a class="YButton" href="./addpersonal.php">Edit</a>
+                            <a class="YButton" href="./tasks.php">Manage</a>
                         </span>
                     </div>
 
                     <div class="article">
                     
-                        <h2>All Personnel Information</h2>
-                        <p>See what all personal are up to. Make sure everybody is working on the tasks they are needed on.  FInd a specific user to see his current job.</p>
+                        <h2>Vacation Requests</h2>
+                        <p>Comfirm or reject vacations. Everybody has right on vacations but is it the best to go on one? Here you can view, accept or deny all the vacation queries. </p>
                         <span class="editLinks">
-                            <a class="YButton" href="./workershub.php">Workershub</a>
+                            <a class="YButton" href="./vacations.php">Watch requests</a>
                         </span>
                     
                         <!-- this has to be add to the calender page 
                             <a href="vacations.php">Check worker vacations</a>
                         -->
+
                     </div>
                 <?php endif; ?>
-                
-                    
-
             </div>
             
-            <div class="homeImg">
+            <div class="calendarImg">
                 &nbsp;
             </div>
            

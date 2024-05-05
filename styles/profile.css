@@ -1,4 +1,4 @@
-.homeActive {
+.profileActive {
     background-color: orange;
     
 }
@@ -27,9 +27,8 @@
 }
 
 .homeImg {
-    width: 100%;
-    background-image: url(../images/Jongen_Holding.webp);
+    width: 50%;
+    background-image: url(../images/HolderForProfile.webp);
     background-position: center;
     background-repeat: no-repeat;
 }
-

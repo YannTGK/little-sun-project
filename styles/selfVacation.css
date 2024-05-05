@@ -1,0 +1,37 @@
+.profileActive {
+    background-color: orange;
+}
+
+.accepted { 
+    color: green; 
+}
+
+.rejected { 
+    color: red; 
+}
+
+.holder {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 64px;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+}
+
+.allVacations {
+    height: 225px;
+    overflow: auto;
+}
+
+.grouping {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+}
