@@ -52,12 +52,12 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                 <thead>
                     <tr>
                         <th class="hidden">User ID</th>
-                        <th>Gebruikersnaam</th>
+                        <th>Username</th>
                         <th>E-mail</th>
-                        <th>Profielfoto</th>
-                        <th>Rol</th>
-                        <th>Hubnaam</th>
-                        <th>Taaktype</th>
+                        <th>Profile picture</th>
+                        <th>Role</th>
+                        <th>Hubname</th>
+                        <th>Tasktype</th>
                     </tr>
                 </thead>
                 <tbody id="workersTableBody">
