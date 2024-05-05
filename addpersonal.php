@@ -87,8 +87,7 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
 $allPersonals = Personal::getAll();
 $allHubs = Hub::getAll();
 $allTasks = Task::getAll();
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 
 <head>

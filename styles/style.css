@@ -10,54 +10,81 @@ body {
 }
 
 header {
-    background-color: black;
-    max-width: 150px;
     height: 100vh;
+    background-color: black;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
-    padding-top: 40px;
+    justify-content: space-between;
+    padding-bottom: 40px;
 }
 
-.navItem {
-    width: 24px;
-    height: 41px;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    padding: 25px 100px;
-    
+.navHolder {
+    display: flex;
+    flex-direction: column;
+    width: 200px; 
+    align-items: center;
 }
 
 .logo {
-    max-width: 130px;
+    width: 140px;
+    height: 80px;
     background-image: url(../images/logo.png);
-    background-size: auto;
-
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-decoration: none;
 }
 
-.icon1 {
-    background-image: url(../images/active_home.png);
-    background-color: white;
+.navItems {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 30px 78px;
+}
+
+.active {
+    background-color: orange;
     
 }
 
-.icon2 {
-    background-image: url(../images/not_active_profile.png);
+.navItems .img {
+    width: 35px ;
+    height: 35px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.icon3 {
-    background-image: url(../images/not_active_calendar.png);
+.navItems .home {
+    background-image: url(../images/HomeIcon.svg);
+    
 }
 
-.icon4 {
-    background-image: url(../images/not_active_settings.png);
+.navItems .profile {
+    background-image: url(../images/profileIcon.svg);
+    
 }
 
-header a {
+.navItems .calendar {
+    background-image: url(../images/CalendarIcon.svg);
+    
+}
+
+.navItems .settings {
+    background-image: url(../images/settingsIcon.svg);
+    
+}
+
+.navItems p, header .logout {
     color: white;
-    font-size: 16px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    width: 44px;
+    text-decoration: none;
 }
 
 .screen {
