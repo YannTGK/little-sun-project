@@ -14,15 +14,23 @@ try {
     exit;
 }
 
-if (isset($_POST['user_id'])) {
-    $user_id = $_POST['user_id'];
-    $query = "UPDATE vacation SET accepted = 1 WHERE user_id = :user_id";
+if (isset($_POST['vacation_id']) && isset($_POST['reject_reason'])) {
+    $vacation_id = $_POST['vacation_id'];
+    $reject_reason = $_POST['reject_reason'];
+    $query = "UPDATE vacation SET accepted = 0, rejectreason = :reject_reason WHERE vacation_id = :vacation_id";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':vacation_id', $vacation_id);
+    $stmt->bindParam(':reject_reason', $reject_reason);
+    $stmt->execute();
+} elseif (isset($_POST['vacation_id'])) {
+    $vacation_id = $_POST['vacation_id'];
+    $query = "UPDATE vacation SET accepted = 1 WHERE vacation_id = :vacation_id";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':vacation_id', $vacation_id);
     $stmt->execute();
 }
 
-$query = "SELECT user_id, username, reason, date, accepted FROM vacation";
+$query = "SELECT vacation_id, user_id, username, reason, date, accepted FROM vacation";
 $stmt = $conn->query($query);
 $vacations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -43,39 +51,49 @@ $vacations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-    <?php include_once(__DIR__ . "/classes/nav.php"); ?>
-    <div class="screen">
-        <div class="title">
-            <h1>Vacation requests</h1>
-            <a class="kruis" href="./calendar.php"></a>
-        </div>
+<?php include_once(__DIR__ . "/classes/nav.php"); ?>
+<div class="screen">
+    <div class="title">
+        <h1>Vacation requests</h1>
+        <a class="kruis" href="./calendar.php"></a>
+    </div>
 
-        <div class="holder">
-            <div class="left">
-                <ul class="overflow">
-                    <?php foreach ($vacations as $vacation): ?>
-                        <?php
-                        $accepted = $vacation['accepted'];
-                        $status = ($accepted === null) ? "in treatment" : ($accepted ? "accepted" : "rejected");
-                        $class = ($accepted === null) ? "in-treatment" : ($accepted ? "accepted" : "rejected");
-                        ?>
-                        <li class="rList <?php echo $class; ?>">
-                            User ID: <?php echo htmlspecialchars($vacation['user_id']); ?>, 
-                            Username: <?php echo htmlspecialchars($vacation['username']); ?> - 
-                            <?php echo htmlspecialchars($vacation['reason']); ?> on <?php echo htmlspecialchars($vacation['date']); ?> - 
-                            <?php echo htmlspecialchars($status); ?> 
-                            <?php if ($status === 'rejected'): ?>
-                                <form method="post" action="">
-                                    <input type="hidden" name="user_id" value="<?php echo $vacation['user_id']; ?>">
-                                    <button type="submit">Accept</button>
-                                </form>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
+    <div class="holder">
+        <div class="left">
+            <ul class="overflow">
+                <?php foreach ($vacations as $vacation): ?>
+                    <?php
+                    $accepted = $vacation['accepted'];
+                    $status = ($accepted === null) ? "in treatment" : ($accepted ? "accepted" : "rejected");
+                    $class = ($accepted === null) ? "in-treatment" : ($accepted ? "accepted" : "rejected");
+                    ?>
+                    <li class="rList <?php echo $class; ?>">
+                        User ID: <?php echo htmlspecialchars($vacation['user_id']); ?>,
+                        Username: <?php echo htmlspecialchars($vacation['username']); ?> -
+                        <?php echo htmlspecialchars($vacation['reason']); ?> on <?php echo htmlspecialchars($vacation['date']); ?> -
+                        <?php echo htmlspecialchars($status); ?>
+                        <?php if ($status === 'rejected'): ?>
+                            <form method="post" action="">
+                                <input type="hidden" name="vacation_id" value="<?php echo $vacation['vacation_id']; ?>">
+                                <button type="submit">Accept</button>
+                            </form>
+                            <form method="post" action="">
+                                <input type="hidden" name="vacation_id" value="<?php echo $vacation['vacation_id']; ?>">
+                                <input type="text" name="reject_reason" placeholder="Enter reject reason" required>
+                                <button type="submit">Reject</button>
+                            </form>
+                        <?php elseif ($status === 'in treatment'): ?>
+                            <form method="post" action="">
+                                <input type="hidden" name="vacation_id" value="<?php echo $vacation['vacation_id']; ?>">
+                                <button type="submit">Accept</button>
+                            </form>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
         </div>
     </div>
+</div>
 
 </body>
 </html>

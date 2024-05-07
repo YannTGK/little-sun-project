@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$query = "SELECT * FROM vacation WHERE user_id = :user_id";
+$query = "SELECT *, COALESCE(rejectreason, '') AS rejectreason FROM vacation WHERE user_id = :user_id";
 $stmt = $conn->prepare($query);
 $stmt->bindParam(':user_id', $_SESSION['id']);
 $stmt->execute();
@@ -100,7 +100,12 @@ $vacations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         $status = ($accepted === null) ? "in treatment" : ($accepted ? "accepted" : "rejected");
                         $class = ($accepted === null) ? "in-treatment" : ($accepted ? "accepted" : "rejected");
                         ?>
-                        <li class="<?php echo $class; ?>"><?php echo $vacation['reason']; ?> from <?php echo $vacation['date']; ?> to <?php echo $vacation['enddate']; ?> - <?php echo $status; ?></li>
+                        <li class="<?php echo $class; ?>">
+                            <?php echo $vacation['reason']; ?> from <?php echo $vacation['date']; ?> to <?php echo $vacation['enddate']; ?> - <?php echo $status; ?>
+                            <?php if ($status === "rejected"): ?>
+                                - Reason: <?php echo $vacation['rejectreason']; ?>
+                            <?php endif; ?>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
             </div>
