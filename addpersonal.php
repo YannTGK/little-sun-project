@@ -98,6 +98,11 @@ $allTasks = Task::getAll();
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/addPersonel.css">
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this person?");
+        }
+    </script>
 </head>
 
 <body>
@@ -110,7 +115,6 @@ $allTasks = Task::getAll();
         </div>
 
         <div class="holder">
-
             <div class="left">
                 <?php if (!empty($error)) : ?>
                     <div><?php echo $error ?></div>
@@ -145,30 +149,29 @@ $allTasks = Task::getAll();
                             </select>
                         </div>
 
-                        
                         <div class="form">
                             <label for="hubname">Hubname</label>
                             <select name="hubname" id="hubname">
                                 <?php foreach ($allHubs as $hub) : ?>
                                     <option value="<?php echo $hub['hubname']; ?>"><?php echo $hub['hubname']; ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="selectGroup">
+                        <div class="tasktype">
+                            <label>Personnel task(s)</label>
+                            <div class="taskItems">
+                                <?php foreach ($allTasks as $task) : ?>
+                                    <div class="taskItem">
+                                        <input type="checkbox" name="tasks[]" value="<?php echo $task['id']; ?>"> 
+                                        <label><?php echo $task['TaskType']; ?></label>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
-                        
-                        <div class="selectGroup">
-                            <div class="tasktype">
-                                <label>Personnel task(s)</label>
-                                <div class="taskItems">
-                                    <?php foreach ($allTasks as $task) : ?>
-                                        <div class="taskItem">
-                                            <input type="checkbox" name="tasks[]" value="<?php echo $task['id']; ?>"> 
-                                            <label><?php echo $task['TaskType']; ?></label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
                     <span class="editLink">
                         <input type="submit" value="Add Personal" class="formButton" />
                     </span>
@@ -210,13 +213,11 @@ $allTasks = Task::getAll();
                                 </span>
                             </div>
 
-
-                            <form action="" method="post">
+                            <form action="" method="post" onsubmit="return confirmDelete();">
                                 <input type="hidden" name="delete_personal" value="<?php echo $personal['id']; ?>">
                                 <div class="editLink">
                                     <input type="submit" value="Delete" class="formButton2">
                                 </div>
-
                             </form>
                         </div>
                     <?php endforeach ?>
