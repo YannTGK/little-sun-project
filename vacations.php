@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Check if user is logged in
 if (!isset($_SESSION['loggedin'])) {
     header("Location: login.php");
     exit;
@@ -15,9 +14,7 @@ try {
     exit;
 }
 
-// Check if vacation_id is set
 if (isset($_POST['user_id'])) {
-    // Update accepted status
     $user_id = $_POST['user_id'];
     $query = "UPDATE vacation SET accepted = 1 WHERE user_id = :user_id";
     $stmt = $conn->prepare($query);
@@ -25,7 +22,6 @@ if (isset($_POST['user_id'])) {
     $stmt->execute();
 }
 
-// Query to select specific columns instead of all
 $query = "SELECT user_id, username, reason, date, accepted FROM vacation";
 $stmt = $conn->query($query);
 $vacations = $stmt->fetchAll(PDO::FETCH_ASSOC);
