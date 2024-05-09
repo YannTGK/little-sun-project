@@ -1,4 +1,27 @@
 <?php
+// Start de sessie
+session_start();
+
+
+if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+  $isAdmin = true;
+} else {
+  $isAdmin = false;
+}
+
+if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
+  $isManager = true;
+} else {
+  $isManager = false;
+}
+
+ if(isset($_SESSION['role'])){
+  $role = $_SESSION['role'];
+  echo $role;
+  } else {
+  echo "Rol niet gevonden in sessie.";
+  } 
+
 // Configuration
 $db_host = 'localhost';
 $db_username = 'root';
@@ -46,10 +69,10 @@ function fetchAgendaItems($pdo) {
     return $agenda_items_by_day_and_hour;
 }
 
-// Define a function to insert agenda item
-function insertAgendaItem($pdo, $username, $task, $startinghour, $endhour, $day) {
-    $query = "INSERT INTO agenda (username, task, startinghour, endhour, day) VALUES (:username, :task, :startinghour, :endhour, :day)";
+function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day) {
+    $query = "INSERT INTO agenda (user_id, username, task, startinghour, endhour, day) VALUES (:user_id, :username, :task, :startinghour, :endhour, :day)";
     $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->bindParam(':username', $username);
     $stmt->bindParam(':task', $task);
     $stmt->bindParam(':startinghour', $startinghour);
@@ -58,7 +81,6 @@ function insertAgendaItem($pdo, $username, $task, $startinghour, $endhour, $day)
     $stmt->execute();
 }
 
-// Define a function to accept or decline a task
 function acceptOrDeclineTask($pdo, $task_id, $accept) {
     $query = "UPDATE agenda SET accept = :accept WHERE id = :task_id";
     $stmt = $pdo->prepare($query);
@@ -67,13 +89,10 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
     $stmt->execute();
 }
 
-// Fetch assigned tasks
 $assigned_tasks = fetchAssignedTasks($pdo);
 
-// Fetch agenda items
 $agenda_items_by_day_and_hour = fetchAgendaItems($pdo);
 
-// Group assigned tasks by user
 $assigned_tasks_by_user = [];
 foreach ($assigned_tasks as $task) {
     $username = $task['username'];
@@ -83,7 +102,6 @@ foreach ($assigned_tasks as $task) {
     $assigned_tasks_by_user[$username][] = $task;
 }
 
-// Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["accept_task"])) {
         acceptOrDeclineTask($pdo, $_POST["task_id"], 1);
@@ -95,13 +113,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $startinghour = $_POST["startinghour"];
         $endhour = $_POST["endhour"];
         $day = $_POST["day"];
-        insertAgendaItem($pdo, $username, $task, $startinghour, $endhour, $day);
+        // Get user_id based on the selected username
+        $user_id = $_POST["user_id"];
+        insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day);
     }
     header("Location: ". htmlspecialchars($_SERVER["PHP_SELF"]));
     exit;
 }
 
-// Close the PDO instance
 $pdo = null;
 ?>
 
@@ -151,22 +170,18 @@ $pdo = null;
         
         $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
         
-        // Initialize current date outside the loop
         $currentDate = $startOfWeek;
         while ($currentDate <= $endOfWeek) {
           echo "<div class='day'>";
           echo "<h2>" . date('l', strtotime($currentDate)) . "</h2>";
           echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
 
-          // Loop through the hours and display the agenda items for each hour
           for ($hour = 7; $hour <= 19; $hour++) {
             echo "<div class='hour-block'>";
             echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-            // Check if there's an agenda item for this hour and day
             if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
               $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
               foreach ($agenda_items_for_hour as $agenda_item) {
-                // Print the username if available for this hour and day
                 if (isset($agenda_item["username"])) {
                   $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
                   $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
@@ -211,6 +226,7 @@ $pdo = null;
         <div class="col-xs-6">
 
         </div>
+        <?php if($isAdmin || $isManager): ?>
         <div class="assingned_tasks">
             <h2>Assigned Tasks</h2>
             <?php
@@ -227,22 +243,22 @@ $pdo = null;
     </div>
     <hr />
 
-    <!-- Formulier voor het invullen van de agenda -->
     <div class="agenda-form">
-        <h2>Vul de agenda in</h2>
+        <h2>fill in agenda</h2>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
             <div class="form-group">
-                <label for="username">Gebruikersnaam:</label>
+                <label for="username">Username:</label>
                 <select class="form-control" id="username" name="username">
                     <?php foreach($assigned_tasks_by_user as $user_id => $user_tasks): ?>
                         <?php foreach($user_tasks as $task): ?>
-                            <option value="<?php echo $task['username']; ?>"><?php echo $task['username']; ?></option>
+                            <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 </select>
             </div>
+            <input type="hidden" name="user_id" id="user_id" value="">
             <div class="form-group">
-                <label for="task">Taak:</label>
+                <label for="task">Task:</label>
                 <select class="form-control" id="task" name="task">
                     <?php foreach($assigned_tasks_by_user as $user_id => $user_tasks): ?>
                         <?php foreach($user_tasks as $task): ?>
@@ -252,21 +268,28 @@ $pdo = null;
                 </select>
             </div>
             <div class="form-group">
-                <label for="startinghour">Startuur:</label>
+                <label for="startinghour">Start hour:</label>
                 <input type="time" class="form-control" id="startinghour" name="startinghour">
             </div>
             <div class="form-group">
-                <label for="endhour">Einduur:</label>
+                <label for="endhour">End hour:</label>
                 <input type="time" class="form-control" id="endhour" name="endhour">
             </div>
             <div class="form-group">
-                <label for="day">Datum:</label>
+                <label for="day">Date:</label>
                 <input type="date" class="form-control" id="day" name="day">
             </div>
-            <button type="submit" class="btn btn-primary">Opslaan</button>
+
+                <button type="submit" class="btn btn-primary">save</button>
+
         </form>
     </div>
-
-
+    <?php endif; ?>
+    <script>
+        document.getElementById('username').addEventListener('change', function() {
+            var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
+            document.getElementById('user_id').value = userId;
+        });
+    </script>
 </body>
 </html>

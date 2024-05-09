@@ -62,25 +62,22 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                             <a class="YButton" href="./vacations.php">Watch requests</a>
                         </span>
                     
-                        <a href="visibleagenda.php">Go to agenda</a>
-                        <!-- this has to be add to the calender page 
-                            <a href="vacations.php">Check worker vacations</a>
-                        -->
-
+                        
                     </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="calendarImg">
+                    &nbsp;
+                </div>
+                
+                
+                
             </div>
             
-            <div class="calendarImg">
-                &nbsp;
-            </div>
-           
-       
             
         </div>
         
-
-    </div>
-
+        <a href="visibleagenda.php">Go to agenda</a>
 </body>
 </html>
