@@ -1,26 +1,9 @@
 <?php
-// Start de sessie
 session_start();
 
-
-if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-  $isAdmin = true;
-} else {
-  $isAdmin = false;
-}
-
-if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
-  $isManager = true;
-} else {
-  $isManager = false;
-}
-
- if(isset($_SESSION['role'])){
-  $role = $_SESSION['role'];
-  echo $role;
-  } else {
-  echo "Rol niet gevonden in sessie.";
-  } 
+// Controleer de rol van de ingelogde gebruiker
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+$isManager = isset($_SESSION['role']) && $_SESSION['role'] === 'Manager';
 
 // Configuration
 $db_host = 'localhost';
@@ -42,12 +25,20 @@ function fetchAssignedTasks($pdo) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Define a function to fetch agenda items
-function fetchAgendaItems($pdo) {
-    $query = "SELECT * FROM agenda";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Define a function to fetch agenda items for the logged-in user or all users if Manager
+function fetchAgendaItems($pdo, $username, $isManager) {
+    if ($isManager) {
+        $query = "SELECT * FROM agenda";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+        $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $query = "SELECT * FROM agenda WHERE username = :username";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->execute();
+        $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     $agenda_items_by_day_and_hour = [];
 
@@ -91,16 +82,11 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
 
 $assigned_tasks = fetchAssignedTasks($pdo);
 
-$agenda_items_by_day_and_hour = fetchAgendaItems($pdo);
+// Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
-$assigned_tasks_by_user = [];
-foreach ($assigned_tasks as $task) {
-    $username = $task['username'];
-    if (!isset($assigned_tasks_by_user[$username])) {
-        $assigned_tasks_by_user[$username] = [];
-    }
-    $assigned_tasks_by_user[$username][] = $task;
-}
+// Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
+$agenda_items_by_day_and_hour = fetchAgendaItems($pdo, $username, $isManager);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["accept_task"])) {
@@ -230,12 +216,10 @@ $pdo = null;
         <div class="assingned_tasks">
             <h2>Assigned Tasks</h2>
             <?php
-                foreach($assigned_tasks_by_user as $user_id => $user_tasks) {
+                foreach($assigned_tasks as $task) {
                     echo "<div>";
-                    foreach($user_tasks as $task) {
-                        echo "<p>User: " . $task["username"] . ", Email: " . $task["email"] . "</p>";
-                        echo "<p>TaskType: " . $task["TaskType"] . "</p>";
-                    }
+                    echo "<p>User: " . $task["username"] . ", Email: " . $task["email"] . "</p>";
+                    echo "<p>TaskType: " . $task["TaskType"] . "</p>";
                     echo "</div>";
                 }
             ?>
@@ -249,10 +233,8 @@ $pdo = null;
             <div class="form-group">
                 <label for="username">Username:</label>
                 <select class="form-control" id="username" name="username">
-                    <?php foreach($assigned_tasks_by_user as $user_id => $user_tasks): ?>
-                        <?php foreach($user_tasks as $task): ?>
-                            <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
-                        <?php endforeach; ?>
+                    <?php foreach($assigned_tasks as $task): ?>
+                        <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -260,10 +242,8 @@ $pdo = null;
             <div class="form-group">
                 <label for="task">Task:</label>
                 <select class="form-control" id="task" name="task">
-                    <?php foreach($assigned_tasks_by_user as $user_id => $user_tasks): ?>
-                        <?php foreach($user_tasks as $task): ?>
-                            <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
-                        <?php endforeach; ?>
+                    <?php foreach($assigned_tasks as $task): ?>
+                        <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
