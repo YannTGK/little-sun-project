@@ -1,0 +1,26 @@
+.agenda {
+    display: flex;
+}
+
+.hour {
+    width: 100px;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+}
+
+.day {
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+
+.hour-block {
+    height: 50px;
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+}
+
+.navigation {
+    margin-bottom: 20px;
+}
+
