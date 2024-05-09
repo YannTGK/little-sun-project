@@ -8,7 +8,6 @@ if(!isset($_SESSION['loggedin'])){
 // Assuming you have a user ID in your session
 $userID = $_SESSION['id'];
 
-
 if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     $isAdmin = true;
 } else {
@@ -49,6 +48,19 @@ if(isset($_POST['action'])) {
     }
 }
 
+// Bereken de totale werktijd voor elke gebruiker
+$sql = "SELECT user_id, SUM(TIMESTAMPDIFF(MINUTE, start, end)) AS total_minutes
+        FROM workhours
+        WHERE DATE(day) = CURDATE()
+        GROUP BY user_id";
+$result = $conn->query($sql);
+$workedTimes = [];
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $workedTimes[$row['user_id']] = $row['total_minutes'];
+    }
+}
+
 ?>
 
 
@@ -59,6 +71,11 @@ if(isset($_POST['action'])) {
   <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/home.css">
+  <style>
+    .overworked {
+        color: red;
+    }
+  </style>
   <title>Littlesun</title>
 </head>
 <body>
@@ -99,7 +116,7 @@ if(isset($_POST['action'])) {
                     <div class="article">
                     
                         <h2>All Personnel Information</h2>
-                        <p>See what all personal are up to. Make sure everybody is working on the tasks they are needed on.  FInd a specific user to see his current job.</p>
+                        <p>See what all personal are up to. Make sure everybody is working on the tasks they are needed on.  Find a specific user to see his current job.</p>
                         <span class="editLinks">
                             <a class="YButton" href="./workershub.php">Workershub</a>
                         </span>
@@ -111,15 +128,81 @@ if(isset($_POST['action'])) {
                 <?php endif; ?>
                 
             </div>
+
+            <div class="workhours">
+                <h2>Work Hours</h2>
+                <table>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Time Worked</th> <!-- Nieuwe kolom -->
+                        <th>Overworked</th> <!-- Nieuwe kolom -->
+                    </tr>
+                    <?php
+                    // Verander de SQL-query om de gebruikersnaam op te halen via een JOIN-clausule
+                    $sql = "SELECT workhours.user_id, workhours.start, workhours.end, account.username 
+                            FROM workhours 
+                            JOIN account ON workhours.user_id = account.id";
+
+                    // Als de rol niet admin of manager is, voeg een voorwaarde toe om alleen gegevens van de huidige gebruiker te selecteren
+                    if(!$isAdmin && !$isManager) {
+                        $userID = $_SESSION['id'];
+                        $sql .= " WHERE workhours.user_id = $userID";
+                    }
+
+                    // Voer de SQL-query uit
+                    $result = $conn->query($sql);
+
+                    // Controleer of er een fout is opgetreden bij het uitvoeren van de query
+                    if (!$result) {
+                        echo "Error: " . $conn->error;
+                    } else {
+                        // Controleer of er resultaten zijn
+                        if ($result->num_rows > 0) {
+                            // Output data van elke rij
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row["user_id"]. "</td>";
+                                echo "<td>" . $row["username"]. "</td>"; // Gebruikersnaam toegevoegd
+                                echo "<td>" . $row["start"]. "</td>";
+                                echo "<td>" . $row["end"]. "</td>";
+                                // Bereken en toon het verschil in uren tussen start en einde
+                                $start = new DateTime($row["start"]);
+                                $end = new DateTime($row["end"]);
+                                $diff = $start->diff($end);
+                                echo "<td>" . $diff->format('%h hours %i minutes') . "</td>";
+
+                                // Controleer of de werktijd meer dan 7 uur is om de overwerkwaarde weer te geven
+                                if ($diff->h > 7) {
+                                    echo "<td class='overworked'>" . ($diff->h - 7) . " hours " . $diff->i . " minutes</td>";
+                                } else {
+                                    echo "<td>0 hours 0 minutes</td>";
+                                }
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='6'>Geen resultaten gevonden</td></tr>";
+                        }
+                    }
+
+                    // Sluit de databaseverbinding
+                    $conn->close();
+                    ?>
+                </table>
+            </div>
             
-            <div class="homeImg">
+            <?php if(!$isAdmin && !$isManager): ?>
                 <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
                     <button type="submit" name="action" value="start">Start</button>
                     <button type="submit" name="action" value="end">Stop</button>
                 </form>
-            </div>
+            <?php endif; ?>
+            <div class="homeImg">
+                </div>
         </div>
     </div>
-
+    
 </body>
 </html>
