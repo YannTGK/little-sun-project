@@ -5,6 +5,9 @@ if(!isset($_SESSION['loggedin'])){
     exit; 
 }
 
+// Assuming you have a user ID in your session
+$userID = $_SESSION['id'];
+
 
 if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     $isAdmin = true;
@@ -18,8 +21,37 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
     $isManager = false;
 }
 
+// Database connection
+require_once(__DIR__ . "/classes/Db.php");
+$db = new Db();
+$conn = $db->getConnection();
+
+// Verwerk startwerk en eindwerk acties
+if(isset($_POST['action'])) {
+    $action = $_POST['action'];
+    $currentTime = date("Y-m-d H:i:s");
+
+    // Voeg de start- of eindwerktijd toe aan de database
+    if ($action === "start" || $action === "end") {
+        $column = ($action === "start") ? "start" : "end";
+
+        if ($action === "start") {
+            $sql = "INSERT INTO workhours (user_id, $column, day) VALUES ($userID, '$currentTime', CURDATE())";
+        } else {
+            $sql = "UPDATE workhours SET $column = '$currentTime' WHERE user_id = $userID AND day = CURDATE()";
+        }
+
+        // Execute the SQL query
+        if ($conn->query($sql) === TRUE) {
+        } else {
+            echo "Error updating record: " . $conn->error;
+        }
+    }
+}
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +71,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
             echo $role;
             } else {
             echo "Rol niet gevonden in sessie.";
-            } ?> pannel
+            } ?> panel
         </h1>
         <div class="holder">
             <div class="articles">
@@ -72,25 +104,21 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                             <a class="YButton" href="./workershub.php">Workershub</a>
                         </span>
                     
-                        <!-- this has to be add to the calender page 
+                        <!-- this has to be add to the calendar page 
                             <a href="vacations.php">Check worker vacations</a>
                         -->
                     </div>
                 <?php endif; ?>
                 
-                    
-
             </div>
             
             <div class="homeImg">
-                &nbsp;
+                <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+                    <button type="submit" name="action" value="start">Start</button>
+                    <button type="submit" name="action" value="end">Stop</button>
+                </form>
             </div>
-           
-       
-            
         </div>
-        
-
     </div>
 
 </body>
