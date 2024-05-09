@@ -58,6 +58,15 @@ function insertAgendaItem($pdo, $username, $task, $startinghour, $endhour, $day)
     $stmt->execute();
 }
 
+// Define a function to accept or decline a task
+function acceptOrDeclineTask($pdo, $task_id, $accept) {
+    $query = "UPDATE agenda SET accept = :accept WHERE id = :task_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':accept', $accept, PDO::PARAM_INT);
+    $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
 // Fetch assigned tasks
 $assigned_tasks = fetchAssignedTasks($pdo);
 
@@ -76,12 +85,18 @@ foreach ($assigned_tasks as $task) {
 
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $task = $_POST["task"];
-    $startinghour = $_POST["startinghour"];
-    $endhour = $_POST["endhour"];
-    $day = $_POST["day"];
-    insertAgendaItem($pdo, $username, $task, $startinghour, $endhour, $day);
+    if (isset($_POST["accept_task"])) {
+        acceptOrDeclineTask($pdo, $_POST["task_id"], 1);
+    } elseif (isset($_POST["decline_task"])) {
+        acceptOrDeclineTask($pdo, $_POST["task_id"], 0);
+    } else {
+        $username = $_POST["username"];
+        $task = $_POST["task"];
+        $startinghour = $_POST["startinghour"];
+        $endhour = $_POST["endhour"];
+        $day = $_POST["day"];
+        insertAgendaItem($pdo, $username, $task, $startinghour, $endhour, $day);
+    }
     header("Location: ". htmlspecialchars($_SERVER["PHP_SELF"]));
     exit;
 }
@@ -156,11 +171,26 @@ $pdo = null;
                   $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
                   $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
                   if ($hour >= $starting_hour && $hour < $end_hour) {
-                      echo "<p style='background-color: red;'>";
+                      $bg_color = "red";
                   } else {
-                      echo "<p>";
+                      $bg_color = "";
                   }
+                  if ($agenda_item["accept"] === null) {
+                      $bg_color = "grey";
+                  } elseif ($agenda_item["accept"] == 1) {
+                      $bg_color = "green";
+                  } elseif ($agenda_item["accept"] == 0) {
+                      $bg_color = "red";
+                  }
+                  echo "<p style='background-color: $bg_color;'>";
                   echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                  if ($agenda_item["accept"] === null) {
+                      echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                      echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
+                      echo "<input type='submit' name='accept_task' value='Accept'>";
+                      echo "<input type='submit' name='decline_task' value='Decline'>";
+                      echo "</form>";
+                  }
                 } else {
                   echo "<p>" . $agenda_item["task"] . "</p>";
                 }
