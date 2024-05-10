@@ -35,20 +35,33 @@ if(isset($_POST['action'])) {
         $column = ($action === "start") ? "start" : "end";
 
         if ($action === "start") {
-            $sql = "INSERT INTO workhours (user_id, $column, day) VALUES ($userID, '$currentTime', CURDATE())";
+            // Controleer of het eindveld NULL is voordat je het startuur toevoegt
+            $checkNullQuery = "SELECT COUNT(*) AS count FROM workhours WHERE user_id = $userID AND end IS NULL";
+            $nullResult = $conn->query($checkNullQuery);
+            $isNull = false;
+            if ($nullResult && $nullResult->num_rows > 0) {
+                $row = $nullResult->fetch_assoc();
+                $isNull = ($row['count'] > 0);
+            }
+            
+            if (!$isNull) {
+                $sql = "INSERT INTO workhours (user_id, $column, day) VALUES ($userID, '$currentTime', CURDATE())";
+            } else {
+                echo "You can't start new work hour, end time is not recorded yet.";
+                exit;
+            }
         } else {
-            $sql = "UPDATE workhours SET $column = '$currentTime' WHERE user_id = $userID AND day = CURDATE()";
+            $sql = "UPDATE workhours SET $column = '$currentTime' WHERE user_id = $userID AND day = CURDATE() AND end IS NULL";
         }
 
-        // Execute the SQL query
         if ($conn->query($sql) === TRUE) {
+
         } else {
             echo "Error updating record: " . $conn->error;
         }
     }
 }
 
-// Bereken de totale werktijd voor elke gebruiker
 $sql = "SELECT user_id, SUM(TIMESTAMPDIFF(MINUTE, start, end)) AS total_minutes
         FROM workhours
         WHERE DATE(day) = CURDATE()
@@ -120,10 +133,7 @@ if ($result->num_rows > 0) {
                         <span class="editLinks">
                             <a class="YButton" href="./workershub.php">Workershub</a>
                         </span>
-                    
-                        <!-- this has to be add to the calendar page 
-                            <a href="vacations.php">Check worker vacations</a>
-                        -->
+   
                     </div>
                 <?php endif; ?>
                 
@@ -137,44 +147,36 @@ if ($result->num_rows > 0) {
                         <th>Username</th>
                         <th>Start Time</th>
                         <th>End Time</th>
-                        <th>Time Worked</th> <!-- Nieuwe kolom -->
-                        <th>Overworked</th> <!-- Nieuwe kolom -->
+                        <th>Time Worked</th>
+                        <th>Overworked</th> 
                     </tr>
                     <?php
-                    // Verander de SQL-query om de gebruikersnaam op te halen via een JOIN-clausule
                     $sql = "SELECT workhours.user_id, workhours.start, workhours.end, account.username 
                             FROM workhours 
                             JOIN account ON workhours.user_id = account.id";
 
-                    // Als de rol niet admin of manager is, voeg een voorwaarde toe om alleen gegevens van de huidige gebruiker te selecteren
                     if(!$isAdmin && !$isManager) {
                         $userID = $_SESSION['id'];
                         $sql .= " WHERE workhours.user_id = $userID";
                     }
 
-                    // Voer de SQL-query uit
                     $result = $conn->query($sql);
 
-                    // Controleer of er een fout is opgetreden bij het uitvoeren van de query
                     if (!$result) {
                         echo "Error: " . $conn->error;
                     } else {
-                        // Controleer of er resultaten zijn
                         if ($result->num_rows > 0) {
-                            // Output data van elke rij
                             while($row = $result->fetch_assoc()) {
                                 echo "<tr>";
                                 echo "<td>" . $row["user_id"]. "</td>";
-                                echo "<td>" . $row["username"]. "</td>"; // Gebruikersnaam toegevoegd
+                                echo "<td>" . $row["username"]. "</td>";
                                 echo "<td>" . $row["start"]. "</td>";
                                 echo "<td>" . $row["end"]. "</td>";
-                                // Bereken en toon het verschil in uren tussen start en einde
                                 $start = new DateTime($row["start"]);
                                 $end = new DateTime($row["end"]);
                                 $diff = $start->diff($end);
                                 echo "<td>" . $diff->format('%h hours %i minutes') . "</td>";
 
-                                // Controleer of de werktijd meer dan 7 uur is om de overwerkwaarde weer te geven
                                 if ($diff->h > 7) {
                                     echo "<td class='overworked'>" . ($diff->h - 7) . " hours " . $diff->i . " minutes</td>";
                                 } else {
@@ -183,11 +185,10 @@ if ($result->num_rows > 0) {
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='6'>Geen resultaten gevonden</td></tr>";
+                            echo "<tr><td colspan='6'>no results</td></tr>";
                         }
                     }
 
-                    // Sluit de databaseverbinding
                     $conn->close();
                     ?>
                 </table>
@@ -203,6 +204,5 @@ if ($result->num_rows > 0) {
                 </div>
         </div>
     </div>
-    
 </body>
 </html>
