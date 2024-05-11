@@ -89,7 +89,7 @@ header {
     margin-left: 32px;
 }
 
-h1, h2, h3, p, a, label, input, span {
+h1, h2, h3, p, a, label, input, span, tr, td {
     font-family: sans-serif;
 }
 

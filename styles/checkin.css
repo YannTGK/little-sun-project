@@ -1,0 +1,45 @@
+.homeActive, .homeActive p {
+    background-color: white;
+    color: #FFDD00;
+    
+}
+
+.navItems .home {
+    background-image: url(../images/active_home.svg);
+    
+}
+
+.holder {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 100%;
+    gap: 24px;
+}
+
+.overworked {
+    color: red;
+    font-weight: bold;
+}
+
+.checkHolder {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin-top: 16px;
+}
+
+
+.workhours {
+    height: 500px;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+    
+}
+
+th {
+    padding-bottom: 16px;
+}
