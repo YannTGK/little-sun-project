@@ -203,24 +203,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <?php if($isAdmin || $isManager): ?>
-                
-                <div class="assigned_tasks">
-                    <h2>Assigned Tasks</h2>
-                    <div class="usersgroup">
-                        <?php foreach($assigned_tasks as $task): ?>
-                            <div class="users">
-                                <p>User: <?php echo $task["username"]; ?> 
-                                <br>
-                                Email: <?php echo $task["email"]; ?></p>
-                                <p>Task: <?php echo $task["TaskType"]; ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
             
                 <div class="agenda-form">
                     <h2>Fill in agenda</h2>
-                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+                    <form class="form-a" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                         <div class="form-group">
                             <label for="username">Username:</label>
                             <select class="form-control" id="username" name="username">
