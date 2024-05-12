@@ -50,10 +50,10 @@
 
 .day > h3 {
     width: 150px;
+    display: flex;
 }
 
 .hour-block {
-    height: 50px;
     border-bottom: 1px solid #ccc;
     padding: 5px;
 }
@@ -69,4 +69,3 @@
     flex-direction: column;
     gap: 8px;
 }
-
