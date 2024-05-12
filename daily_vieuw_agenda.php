@@ -128,32 +128,52 @@ $pdo = null;
 
     <div class="screen">
         <div class="title">
-            <h1>Monthly View</h1>
+            <h1>Daily View</h1>
             <a class="kruis" href="./calendar.php"></a>
         </div>
-        <div class="nav2">
-            <div class="editLink">
-                <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
+        <div class="nav2holder">
+            <div class="nav2">
+                <div class="editLink">
+                    <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                </div>
+                <div class="editLink">
+                    <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                </div>
+                <div class="editLink">
+                    <a class="formButton" href="year_view_agenda.php">Yearly vieuw</a>
+                </div>
             </div>
-            <div class="editLink">
-                <a class="formButton" href="visibleagenda.php">Weekly view</a>
-            </div>
-            <div class="editLink">
-                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-            </div>
+            <form class="nav2" action="" method="post">
+                <div class="editLink">
+                    <input class="formButton2" type="submit" name="prev_week" value="Day before">
+                </div>
+                <div class="editLink">
+                    <input class="formButton2" type="submit" name="next_week" value="Day after">
+                </div>
+            </form>
         </div>
 
         <div class="holder">
-            <?php
-                $currentYear = date("Y");
-                $numDaysInYear = date("z", mktime(0, 0, 0, 12, 31, $currentYear)) + 1;
-
-                echo "<div class='agenda'>";
-                for ($dayOfYear = 1; $dayOfYear <= $numDaysInYear; $dayOfYear++) {
-                    $currentDate = date("Y-m-d", mktime(0, 0, 0, 1, $dayOfYear, $currentYear));
+           
+            <div class="agenda">
+                
+                <?php
+                $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+    
+                if (isset($_POST['prev_week'])) {
+                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
+                } elseif (isset($_POST['next_week'])) {
+                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
+                }
+    
+                $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
+    
+                $currentDate = date('Y-m-d'); // Set current date
+                while ($currentDate <= $endOfWeek) {
                     echo "<div class='day'>";
                     echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
                     echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
+    
                     for ($hour = 7; $hour <= 19; $hour++) {
                         echo "<div class='hour-block'>";
                         echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
@@ -193,13 +213,16 @@ $pdo = null;
                         }
                         echo "</div>";
                     }
+    
                     echo "</div>";
+                    $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                 }
-                echo "</div>";
-            ?>
-
+                ?>
+            </div>
+        
+    
             <?php if($isAdmin || $isManager): ?>
-              
+        
                 <div class="agenda-form">
                     <h2>Fill in agenda</h2>
                     <form class="form-a" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
@@ -233,9 +256,10 @@ $pdo = null;
                             <input type="date" class="form-control" id="day" name="day">
                         </div>
                         <div class="editLink">
-                            <button type="submit" class="formButton">Save</button>
+                            <button type="submit" class="formButton">save</button>   
                         </div>
-                      
+                        
+        
                     </form>
                 </div>
             <?php endif; ?>

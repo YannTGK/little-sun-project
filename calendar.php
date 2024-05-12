@@ -46,7 +46,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
              
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
-                    
+                        
                         <h2>Manage Task</h2>
                         <p>Add and delete possible tasks for your employees. You can streemline what has to be done by everybody. Make sure no tasks are left out. After this, add the task to the specific employee</p>
                         <span class="editLinks">
@@ -55,29 +55,39 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                     </div>
 
                     <div class="article">
-                    
+                        
                         <h2>Vacation Requests</h2>
                         <p>Comfirm or reject vacations. Everybody has right on vacations but is it the best to go on one? Here you can view, accept or deny all the vacation queries. </p>
                         <span class="editLinks">
                             <a class="YButton" href="./vacations.php">Watch requests</a>
                         </span>
-                    
                         
+                            
                     </div>
-                    <?php endif; ?>
+                <?php endif; ?>
+
+                <div class="article">
+                    
+                    <h2>Organize planning</h2>
+                    <p>Your central hub for managing workdays and hours. With our menu, you effortlessly submit your workdays and track your hours. Simple and efficient. </p>
+                    <span class="editLinks">
+                        <a class="YButton" href="visibleagenda.php">Organize</a>
+                    </span>   
                 </div>
-                
-                <div class="calendarImg">
-                    &nbsp;
-                </div>
-                
-                
-                
+
             </div>
-            
-            
+                
+            <div class="calendarImg">
+                &nbsp;
+            </div>
+                
+                
+                
         </div>
+            
+            
+    </div>
         
-        <a href="visibleagenda.php">Go to agenda</a>
+    
 </body>
 </html>

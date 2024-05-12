@@ -1,19 +1,20 @@
 <?php
 session_start();
 
-
+// Controleer de rol van de ingelogde gebruiker
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $isManager = isset($_SESSION['role']) && $_SESSION['role'] === 'Manager';
 
-
+// Configuration
 $db_host = 'localhost';
 $db_username = 'root';
 $db_password = 'root';
 $db_name = 'littlesun';
 
-
+// Create a PDO instance
 $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
 
+// Define a function to fetch assigned tasks
 function fetchAssignedTasks($pdo) {
     $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
                FROM account a 
@@ -24,7 +25,7 @@ function fetchAssignedTasks($pdo) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-
+// Define a function to fetch agenda items for the logged-in user or all users if Manager
 function fetchAgendaItems($pdo, $username, $isManager) {
     if ($isManager) {
         $query = "SELECT * FROM agenda";
@@ -43,7 +44,7 @@ function fetchAgendaItems($pdo, $username, $isManager) {
 
     foreach ($agenda_items as $item) {
         $day = $item['day'];
-        $hour = intval(substr($item['startinghour'], 0, 2)); 
+        $hour = intval(substr($item['startinghour'], 0, 2)); // Extract hour from starting hour
 
         if (!isset($agenda_items_by_day_and_hour[$day])) {
             $agenda_items_by_day_and_hour[$day] = [];
@@ -81,13 +82,22 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
 
 $assigned_tasks = fetchAssignedTasks($pdo);
 
+// Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
+// Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
 $agenda_items_by_day_and_hour = fetchAgendaItems($pdo, $username, $isManager);
 
+// Haal alle vakantie-items op
+$query_vacation = "SELECT * FROM vacation WHERE accepted = 1";
+$stmt_vacation = $pdo->prepare($query_vacation);
+$stmt_vacation->execute();
+$vacation_items = $stmt_vacation->fetchAll(PDO::FETCH_ASSOC);
+
+$errorMessage = ''; // Initialiseer de foutmelding
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
+    // Check if the user is on vacation for the specified date
     $username = $_POST["username"];
     $day = $_POST["day"];
     $user_id = $_POST["user_id"];
@@ -101,8 +111,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($onVacation) {
+        // User is on vacation, set error message
         $errorMessage = "Selected user is on vacation on the specified date. Please choose a different date or user.";
     } else {
+        // Proceed with inserting the agenda item
         $task = $_POST["task"];
         $startinghour = $_POST["startinghour"];
         $endhour = $_POST["endhour"];
@@ -128,6 +140,7 @@ $pdo = null;
     <link rel="stylesheet" href="styles/agenda.css">
 </head>
 <body>
+    <!-- Foutmelding weergeven -->
     <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
         <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
     <?php endif; ?>
@@ -205,6 +218,7 @@ $pdo = null;
                                         echo "<input type='submit' name='decline_task' value='Decline'>";
                                         echo "</form>";
                                     }
+                                    // Print start hour and end hour
                                     echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . ", End hour: " . $agenda_item['endhour'] . "</p>";
                                 } else {
                                     echo "<p>" . $agenda_item["task"] . "</p>";
@@ -221,6 +235,7 @@ $pdo = null;
         </div>
     </div>
 
+  
     <hr />
     <div class="row">
         <div class="col-xs-6">

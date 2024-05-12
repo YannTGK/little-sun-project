@@ -1,5 +1,39 @@
+.calendarActive, .calendarActive p {
+    background-color: white;
+    color:  #FFDD00;
+}
+
+.navItems .calendar {
+    background-image: url(../images/active_calendar.svg);
+    
+}
+
+.nav2 {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin: 24px 0px;
+    background-color: white;
+}
+
+.formButton {
+    color: black;
+}
+
+.holder {
+    margin-bottom: 32px;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
 .agenda {
     display: flex;
+    flex-direction: row;
+    gap: 24px;
+    width: 1300px;
+    overflow-x: auto;
 }
 
 .hour {
@@ -9,9 +43,13 @@
 }
 
 .day {
-    flex: 1;
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.day > h3 {
+    width: 150px;
 }
 
 .hour-block {
@@ -20,7 +58,15 @@
     padding: 5px;
 }
 
-.navigation {
-    margin-bottom: 20px;
+.agenda-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-a {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 

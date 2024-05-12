@@ -10,6 +10,7 @@ body {
 }
 
 header {
+    position: fixed;
     height: 100vh;
     background-color: black;
     display: flex;
@@ -17,6 +18,7 @@ header {
     align-items: center;
     justify-content: space-between;
     padding-bottom: 40px;
+    width: 200px; 
 }
 
 .navHolder {
@@ -24,6 +26,7 @@ header {
     flex-direction: column;
     width: 200px; 
     align-items: center;
+    
 }
 
 .logo {
@@ -86,10 +89,10 @@ header {
     width: 100%;
     margin-top: 0px;
     margin-right: 24px;
-    margin-left: 32px;
+    margin-left: 232px;
 }
 
-h1, h2, h3, p, a, label, input, span {
+h1, h2, h3, p, a, label, input, span, tr, td {
     font-family: sans-serif;
 }
 
@@ -131,7 +134,7 @@ a.YButton {
     padding: 8px 32px;
     border-radius: 12px;
     background-color: #FFDD00;
-    font-weight: bold;
+    font-weight: bold
 }
 
 .formButton2 {
