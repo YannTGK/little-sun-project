@@ -124,7 +124,7 @@ $pdo = null;
 <body>
     <h1>Yearly View</h1>
 <a href="monthly_view_agenda.php">monthly view</a>
-<a href="daily_view_agenda.php">daily view</a>
+<a href="./daily_vieuw_agenda.php">daily view</a>
 <a href="weekly_view_agenda.php">weekly view</a>
 
     <div class="screen">
