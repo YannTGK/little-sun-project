@@ -197,6 +197,7 @@ $pdo = null;
                                     }
                                     echo "<p style='background-color: $bg_color;'>";
                                     echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
                                     if ($agenda_item["accept"] === null) {
                                         echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
                                         echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
@@ -204,8 +205,7 @@ $pdo = null;
                                         echo "<input type='submit' name='decline_task' value='Decline'>";
                                         echo "</form>";
                                     }
-                                    // Print start hour and end hour
-                                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . ", End hour: " . $agenda_item['endhour'] . "</p>";
+                                    
                                 } else {
                                     echo "<p>" . $agenda_item["task"] . "</p>";
                                 }

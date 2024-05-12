@@ -137,158 +137,165 @@ $pdo = null;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="styles/normalize.css">
+    <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/agenda.css">
 </head>
 <body>
-    <!-- Foutmelding weergeven -->
-    <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
-        <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
-    <?php endif; ?>
-
-    <h1>Weekly View</h1>
-    <a href="monthly_view_agenda.php">Monthly View</a>
-    <a href="dailyvieuw_agenda.php">Daily View</a>
-    <a href="year_view_agenda.php">Year View</a>
+    <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
-        <h1>Hourly Agenda</h1>
-        <div class="navigation">
-            <form action="" method="post">
-                <input type="submit" name="prev_week" value="Previous Week">
-                <input type="submit" name="next_week" value="Next Week">
+
+        <div class="title">
+            <h1>Weekly View</h1>
+            <a class="kruis" href="./calendar.php"></a>
+        </div>
+        <div class="nav2holder">
+            <div class="nav2">
+                <div class="editLink">
+                    <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
+                </div>
+                <div class="editLink">
+                    <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                </div>
+                <div class="editLink">
+                    <a class="formButton" href="year_view_agenda.php">Yearly vieuw</a>
+                </div>
+            </div>
+            <form class="nav2" action="" method="post">
+                <div class="editLink">
+                    <input class="formButton2" type="submit" name="prev_week" value="Previous week">
+                </div>
+                <div class="editLink">
+                    <input class="formButton2" type="submit" name="next_week" value="Comming week">
+                </div>
             </form>
         </div>
-        <div class="agenda">
-            <div class="hour">
-                <div class="hour-block">
-                    <p>6:00 - 7:00</p>
-                </div>
+
+        <!-- Foutmelding weergeven -->
+        <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
+            <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
+        <?php endif; ?>
+
+        <div class="holder">
+            
+            <div class="agenda">
+        
                 <?php
-                    for ($hour = 7; $hour <= 19; $hour++) {
-                        echo "<div class='hour-block'>";
-                        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
+                    $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+
+                    if (isset($_POST['prev_week'])) {
+                        $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
+                    } elseif (isset($_POST['next_week'])) {
+                        $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
+                    }
+
+                    $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
+
+                    $currentDate = $startOfWeek;
+                    while ($currentDate <= $endOfWeek) {
+                        echo "<div class='day'>";
+                        echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
+                        echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
+
+                        for ($hour = 7; $hour <= 19; $hour++) {
+                            echo "<div class='hour-block'>";
+                            echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
+                            if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
+                            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
+                            foreach ($agenda_items_for_hour as $agenda_item) {
+                                if (isset($agenda_item["username"])) {
+                                $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
+                                $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
+                                if ($hour >= $starting_hour && $hour < $end_hour) {
+                                    $bg_color = "red";
+                                } else {
+                                    $bg_color = "";
+                                }
+                                if ($agenda_item["accept"] === null) {
+                                    $bg_color = "grey";
+                                } elseif ($agenda_item["accept"] == 1) {
+                                    $bg_color = "green";
+                                } elseif ($agenda_item["accept"] == 0) {
+                                    $bg_color = "red";
+                                }
+                                echo "<p style='background-color: $bg_color;'>";
+                                echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                                echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
+                                if ($agenda_item["accept"] === null) {
+                                    echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                                    echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
+                                    echo "<input type='submit' name='accept_task' value='Accept'>";
+                                    echo "<input type='submit' name='decline_task' value='Decline'>";
+                                    echo "</form>";
+                                }
+                                
+                                } else {
+                                echo "<p>" . $agenda_item["task"] . "</p>";
+                                }
+                            }
+                            }
+                            echo "</div>";
+                        }
+
                         echo "</div>";
+                        $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                     }
                 ?>
             </div>
-            <?php
-                $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+        
+            <?php if($isAdmin || $isManager): ?>
 
-                if (isset($_POST['prev_week'])) {
-                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
-                } elseif (isset($_POST['next_week'])) {
-                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
-                }
+                <div class="agenda-form">
+                    <h2>Fill in agenda</h2>
+                    <form class="form-a" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <select class="form-control" id="username" name="username">
+                                <?php foreach($assigned_tasks as $task): ?>
+                                    <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" name="user_id" id="user_id" value="">
+                        <div class="form-group">
+                            <label for="task">Task:</label>
+                            <select class="form-control" id="task" name="task">
+                                <?php foreach($assigned_tasks as $task): ?>
+                                    <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startinghour">Start hour:</label>
+                            <input type="time" class="form-control" id="startinghour" name="startinghour">
+                        </div>
+                        <div class="form-group">
+                            <label for="endhour">End hour:</label>
+                            <input type="time" class="form-control" id="endhour" name="endhour">
+                        </div>
+                        <div class="form-group">
+                            <label for="day">Date:</label>
+                            <input type="date" class="form-control" id="day" name="day">
+                        </div>
+                        
+                        <div class="editLink">
+                            <button type="submit" class="formButton">Save</button>
 
-                $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
+                        </div>
 
-                $currentDate = $startOfWeek;
-                while ($currentDate <= $endOfWeek) {
-                    echo "<div class='day'>";
-                    echo "<h2>" . date('l', strtotime($currentDate)) . "</h2>";
-                    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
-
-                    for ($hour = 7; $hour <= 19; $hour++) {
-                        //here?
-                        echo "<div class='hour-block'>";
-                        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-                        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-                        $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-                        foreach ($agenda_items_for_hour as $agenda_item) {
-                            if (isset($agenda_item["username"])) {
-                            $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                            $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                            if ($hour >= $starting_hour && $hour < $end_hour) {
-                                $bg_color = "red";
-                            } else {
-                                $bg_color = "";
-                            }
-                            if ($agenda_item["accept"] === null) {
-                                $bg_color = "grey";
-                            } elseif ($agenda_item["accept"] == 1) {
-                                $bg_color = "green";
-                            } elseif ($agenda_item["accept"] == 0) {
-                                $bg_color = "red";
-                            }
-                            echo "<p style='background-color: $bg_color;'>";
-                            echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                            if ($agenda_item["accept"] === null) {
-                                echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
-                                echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
-                                echo "<input type='submit' name='accept_task' value='Accept'>";
-                                echo "<input type='submit' name='decline_task' value='Decline'>";
-                                echo "</form>";
-                            }
-                            // Print start hour and end hour
-                            echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . ", End hour: " . $agenda_item['endhour'] . "</p>";
-                            } else {
-                            echo "<p>" . $agenda_item["task"] . "</p>";
-                            }
-                        }
-                        }
-                        echo "</div>";
-                    }
-
-                    echo "</div>";
-                    $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
-                }
-            ?>
+                    </form>
+                </div>
+            <?php endif; ?>
+                
         </div>
     </div>
-
-  
-    <hr />
-    <div class="row">
-        <div class="col-xs-6">
-
-        </div>
-        <?php if($isAdmin || $isManager): ?>
-
-        <div class="agenda-form">
-            <h2>Fill in agenda</h2>
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <select class="form-control" id="username" name="username">
-                        <?php foreach($assigned_tasks as $task): ?>
-                            <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <input type="hidden" name="user_id" id="user_id" value="">
-                <div class="form-group">
-                    <label for="task">Task:</label>
-                    <select class="form-control" id="task" name="task">
-                        <?php foreach($assigned_tasks as $task): ?>
-                            <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="startinghour">Start hour:</label>
-                    <input type="time" class="form-control" id="startinghour" name="startinghour">
-                </div>
-                <div class="form-group">
-                    <label for="endhour">End hour:</label>
-                    <input type="time" class="form-control" id="endhour" name="endhour">
-                </div>
-                <div class="form-group">
-                    <label for="day">Date:</label>
-                    <input type="date" class="form-control" id="day" name="day">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Save</button>
-
-            </form>
-        </div>
-        <?php endif; ?>
-
-        <script>
-            document.getElementById('username').addEventListener('change', function() {
-                var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
-                document.getElementById('user_id').value = userId;
-            });
-        </script>
-    </div>
+    <script>
+        document.getElementById('username').addEventListener('change', function() {
+            var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
+            document.getElementById('user_id').value = userId;
+        });
+    </script>
+    
 </body>
 </html>

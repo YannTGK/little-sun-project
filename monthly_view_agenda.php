@@ -156,11 +156,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         for ($hour = 7; $hour <= 19; $hour++) {
                             echo "<div class='hour-block'>";
-                                echo "<p class='itemAgenda'>$hour:00 - " . ($hour + 1) . ":00</p>";
+                                echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
                                 if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
                                     $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
                                     foreach ($agenda_items_for_hour as $agenda_item) {
-                                        echo "<div class='task-item'>";
+                                        echo "<p>";
                                             if (isset($agenda_item["username"])) {
                                                 $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
                                                 $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
@@ -176,8 +176,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 } elseif ($agenda_item["accept"] == 0) {
                                                     $bg_color = "red";
                                                 }
-                                                echo "<span style='background-color: $bg_color;'>";
-                                                echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</span>";
+                                                echo "<p style='background-color: $bg_color;'>";
+                                                echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                                                echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". " End hour: " . $agenda_item['endhour'] . "</p>";
                                                 if ($agenda_item["accept"] === null) {
                                                     echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
                                                         echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
@@ -186,11 +187,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     echo "</form>";
                                                 }
                                                 // Print start hour and end hour
-                                                echo "<span style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] .  " End hour: " . $agenda_item['endhour'] . "</span>";
+                                                
                                             } else {
                                                 echo $agenda_item["task"];
                                             }
-                                        echo "</div>"; // Close .task-item
+                                        echo "</p>"; // Close .task-item
                                     }
                                 }
                             echo "</div>";
