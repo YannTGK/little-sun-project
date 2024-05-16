@@ -16,28 +16,14 @@ $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password
 
 // Define a function to fetch assigned tasks
 function fetchAssignedTasks($pdo) {
-    $query = "SELECT DISTINCT id, username FROM account"; // Include the user ID to use later
+    $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
+               FROM account a 
+               JOIN assignedtasks at ON a.id = at.user_id 
+               JOIN tasks t ON at.tasktype_id = t.id";
     $stmt = $pdo->prepare($query);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-// Define a function to fetch unique task types
-function fetchUniqueTaskTypes($pdo) {
-    $query = "SELECT DISTINCT id, TaskType FROM tasks"; // Include the task ID to use later
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function fetchAssignedUsernames($pdo) {
-    $query = "SELECT DISTINCT username, id FROM account"; // Select distinct usernames
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-
 
 // Define a function to fetch agenda items for the logged-in user or all users if Manager
 function fetchAgendaItems($pdo, $username, $isManager) {
@@ -95,7 +81,6 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
 }
 
 $assigned_tasks = fetchAssignedTasks($pdo);
-$unique_task_types = fetchUniqueTaskTypes($pdo);
 
 // Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
@@ -140,8 +125,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$pdo = null;
+$query_vacation = "SELECT * FROM vacation WHERE accepted = 1";
+$stmt_vacation = $pdo->prepare($query_vacation);
+$stmt_vacation->execute();
+$vacation_items = $stmt_vacation->fetchAll(PDO::FETCH_ASSOC);
+
+
+
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -196,67 +188,79 @@ $pdo = null;
             
             <div class="agenda">
         
-                <?php
-                    $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+            <?php
+    $startOfWeek = date('Y-m-d', strtotime('monday this week'));
 
-                    if (isset($_POST['prev_week'])) {
-                        $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
-                    } elseif (isset($_POST['next_week'])) {
-                        $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
-                    }
+    if (isset($_POST['prev_week'])) {
+        $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
+    } elseif (isset($_POST['next_week'])) {
+        $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
+    }
 
-                    $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
+    $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
 
-                    $currentDate = $startOfWeek;
-                    while ($currentDate <= $endOfWeek) {
-                        echo "<div class='day'>";
-                        echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-                        echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
+    $currentDate = $startOfWeek;
+    while ($currentDate <= $endOfWeek) {
+        echo "<div class='day'>";
+        echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
+        echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
 
-                        for ($hour = 7; $hour <= 19; $hour++) {
-                            echo "<div class='hour-block'>";
-                            echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-                            if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-                            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-                            foreach ($agenda_items_for_hour as $agenda_item) {
-                                if (isset($agenda_item["username"])) {
-                                $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                                $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                                if ($hour >= $starting_hour && $hour < $end_hour) {
-                                    $bg_color = "red";
-                                } else {
-                                    $bg_color = "";
-                                }
-                                if ($agenda_item["accept"] === null) {
-                                    $bg_color = "grey";
-                                } elseif ($agenda_item["accept"] == 1) {
-                                    $bg_color = "green";
-                                } elseif ($agenda_item["accept"] == 0) {
-                                    $bg_color = "red";
-                                }
-                                echo "<p style='background-color: $bg_color;'>";
-                                echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                                echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
-                                if ($agenda_item["accept"] === null) {
-                                    echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
-                                    echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
-                                    echo "<input type='submit' name='accept_task' value='Accept'>";
-                                    echo "<input type='submit' name='decline_task' value='Decline'>";
-                                    echo "</form>";
-                                }
-                                
-                                } else {
-                                echo "<p>" . $agenda_item["task"] . "</p>";
-                                }
-                            }
-                            }
-                            echo "</div>";
+        // Toevoeging van de foreach-lus voor vakantie-items
+        foreach ($vacation_items as $vacation_item) {
+            if ($vacation_item['date'] <= $currentDate && $vacation_item['enddate'] >= $currentDate) {
+                $backgroundColor = ($vacation_item['reason'] == 'sick') ? 'blue' : 'yellow';
+                $textColor = ($vacation_item['reason'] == 'sick') ? 'white' : 'black';
+                echo "<p style='background-color: $backgroundColor; color: $textColor;'>Vacation: " . $vacation_item['username'] . "</p>";
+                echo "<p style='background-color: $backgroundColor; color: $textColor;'>Reason: " . $vacation_item['reason'] . "</p>"; // Afdrukken van de reden
+                // Voeg andere informatie toe die je wilt tonen voor vakantie-items
+            }
+        }
+
+        for ($hour = 7; $hour <= 19; $hour++) {
+            echo "<div class='hour-block'>";
+            echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
+            if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
+                $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
+                foreach ($agenda_items_for_hour as $agenda_item) {
+                    if (isset($agenda_item["username"])) {
+                        $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
+                        $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
+                        if ($hour >= $starting_hour && $hour < $end_hour) {
+                            $bg_color = "red";
+                        } else {
+                            $bg_color = "";
                         }
-
-                        echo "</div>";
-                        $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+                        if ($agenda_item["accept"] === null) {
+                            $bg_color = "grey";
+                        } elseif ($agenda_item["accept"] == 1) {
+                            $bg_color = "green";
+                        } elseif ($agenda_item["accept"] == 0) {
+                            $bg_color = "red";
+                        }
+                        echo "<p style='background-color: $bg_color;'>";
+                        echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                        echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
+                        if ($agenda_item["accept"] === null) {
+                            echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                            echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
+                            echo "<input type='submit' name='accept_task' value='Accept'>";
+                            echo "<input type='submit' name='decline_task' value='Decline'>";
+                            echo "</form>";
+                        }
+                    } else {
+                        echo "<p>" . $agenda_item["task"] . "</p>";
                     }
-                ?>
+                }
+            }
+            echo "</div>";
+        }
+
+        echo "</div>";
+        $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+    }
+?>
+
+
             </div>
         
             <?php if($isAdmin || $isManager): ?>
@@ -276,8 +280,8 @@ $pdo = null;
                         <div class="form-group">
                             <label for="task">Task:</label>
                             <select class="form-control" id="task" name="task">
-                                <?php foreach($unique_task_types as $task): ?>
-                                    <option value="<?php echo $task['TaskType']; ?>" data-task-id="<?php echo $task['id']; ?>"><?php echo $task['TaskType']; ?></option>
+                                <?php foreach($assigned_tasks as $task): ?>
+                                    <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

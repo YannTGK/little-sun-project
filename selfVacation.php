@@ -19,7 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user_id = $_SESSION['id'];
             $username = $_SESSION['username'];
             $role = $_SESSION['role']; 
-            $accepted = ($role === 'Manager') ? 1 : 0; 
+    
+            $accepted = ($_POST['reason'] === 'sick') ? 1 : ($role === 'Manager' ? 1 : 0);
+
 
             $stmt = $conn->prepare("INSERT INTO vacation (user_id, username, reason, date, enddate, accepted) VALUES (:user_id, :username, :reason, :date, :enddate, :accepted)");
 
