@@ -16,14 +16,28 @@ $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password
 
 // Define a function to fetch assigned tasks
 function fetchAssignedTasks($pdo) {
-    $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
-               FROM account a 
-               JOIN assignedtasks at ON a.id = at.user_id 
-               JOIN tasks t ON at.tasktype_id = t.id";
+    $query = "SELECT DISTINCT id, username FROM account"; // Include the user ID to use later
     $stmt = $pdo->prepare($query);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Define a function to fetch unique task types
+function fetchUniqueTaskTypes($pdo) {
+    $query = "SELECT DISTINCT id, TaskType FROM tasks"; // Include the task ID to use later
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function fetchAssignedUsernames($pdo) {
+    $query = "SELECT DISTINCT username, id FROM account"; // Select distinct usernames
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 
 // Define a function to fetch agenda items for the logged-in user or all users if Manager
 function fetchAgendaItems($pdo, $username, $isManager) {
@@ -81,6 +95,7 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
 }
 
 $assigned_tasks = fetchAssignedTasks($pdo);
+$unique_task_types = fetchUniqueTaskTypes($pdo);
 
 // Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
@@ -261,8 +276,8 @@ $pdo = null;
                         <div class="form-group">
                             <label for="task">Task:</label>
                             <select class="form-control" id="task" name="task">
-                                <?php foreach($assigned_tasks as $task): ?>
-                                    <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
+                                <?php foreach($unique_task_types as $task): ?>
+                                    <option value="<?php echo $task['TaskType']; ?>" data-task-id="<?php echo $task['id']; ?>"><?php echo $task['TaskType']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

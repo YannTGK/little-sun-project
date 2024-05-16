@@ -21,13 +21,18 @@ class AllWorkers {
                     a.password,
                     a.role,
                     a.hubname,
-                    t.TaskType
+                    t.TaskType,
+                    w.start,
+                    w.end,
+                    w.day
                   FROM 
                     account a
                   LEFT JOIN 
                     assignedtasks at ON a.id = at.user_id
                   LEFT JOIN 
-                    tasks t ON at.tasktype_id = t.id";
+                    tasks t ON at.tasktype_id = t.id
+                  LEFT JOIN
+                    workhours w ON a.id = w.user_id"; // assuming the user_id in workhours table matches with the account id
 
         $result = $this->conn->query($query);
 
@@ -41,7 +46,10 @@ class AllWorkers {
                     "profilepicture" => $row["profilepicture"],
                     "role" => $row["role"],
                     "hubname" => $row["hubname"],
-                    "TaskType" => $row["TaskType"]
+                    "TaskType" => $row["TaskType"],
+                    "start" => $row["start"],
+                    "end" => $row["end"],
+                    "day" => $row["day"]
                 );
                 $workers[] = $worker;
             }
@@ -56,4 +64,5 @@ class AllWorkers {
     }
 }
 
-?>
+
+

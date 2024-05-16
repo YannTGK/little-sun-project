@@ -35,6 +35,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
   <title>Littlesun</title>
 </head>
 <body>
+
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
@@ -79,7 +80,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
    
                     </div>
                 <?php endif; ?>
-
+                <a href="reports.php">reports</a>
                 <div class="article">
                     
                     <h2>Check in</h2>
