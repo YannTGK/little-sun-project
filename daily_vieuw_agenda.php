@@ -133,79 +133,65 @@ $pdo = null;
         </div>
 
         <div class="holder">
-           
-            <div class="agenda">
-                
-                <?php
-                $startOfWeek = date('Y-m-d', strtotime('monday this week'));
-    
-                if (isset($_POST['prev_week'])) {
-                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
-                } elseif (isset($_POST['next_week'])) {
-                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
-                }
-    
-                $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
-    
-                $currentDate = date('Y-m-d'); // Set current date
-                while ($currentDate <= $endOfWeek) {
-                    echo "<div class='day'>";
-                    echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-                    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
-    
-                    for ($hour = 7; $hour <= 19; $hour++) {
-                        echo "<div class='hour-block'>";
-                        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-                        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-                            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-                            foreach ($agenda_items_for_hour as $agenda_item) {
-                                if (isset($agenda_item["username"])) {
-                                    $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                                    $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                                    if ($hour >= $starting_hour && $hour < $end_hour) {
-                                        $bg_color = "red";
-                                    } else {
-                                        $bg_color = "";
-                                    }
-                                    if ($agenda_item["accept"] === null) {
-                                        $bg_color = "grey";
-                                    } elseif ($agenda_item["accept"] == 1) {
-                                        $bg_color = "green";
-                                    } elseif ($agenda_item["accept"] == 0) {
-                                        $bg_color = "red";
-                                    }
-                                    echo "<p style='background-color: $bg_color;'>";
-                                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
-                                    if ($agenda_item["accept"] === null) {
-                                        echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
-                                        echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
-                                        echo "<input type='submit' name='accept_task' value='Accept'>";
-                                        echo "<input type='submit' name='decline_task' value='Decline'>";
-                                        echo "</form>";
-                                    }
-                                    
-                                } else {
-                                    echo "<p>" . $agenda_item["task"] . "</p>";
-                                }
-                            }
+    <div class="agenda">
+        <?php
+        // Alleen de huidige dag tonen
+        $currentDate = date('Y-m-d');
+
+        echo "<div class='day'>";
+        echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
+        echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
+
+        for ($hour = 7; $hour <= 19; $hour++) {
+            echo "<div class='hour-block'>";
+            echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
+
+            if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
+                $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
+                foreach ($agenda_items_for_hour as $agenda_item) {
+                    if (isset($agenda_item["username"])) {
+                        $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
+                        $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
+                        if ($hour >= $starting_hour && $hour < $end_hour) {
+                            $bg_color = "red";
+                        } else {
+                            $bg_color = "";
                         }
-                        echo "</div>";
+                        if ($agenda_item["accept"] === null) {
+                            $bg_color = "grey";
+                        } elseif ($agenda_item["accept"] == 1) {
+                            $bg_color = "green";
+                        } elseif ($agenda_item["accept"] == 0) {
+                            $bg_color = "red";
+                        }
+                        echo "<p style='background-color: $bg_color;'>";
+                        echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                        echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
+                        if ($agenda_item["accept"] === null) {
+                            echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                            echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
+                            echo "<input type='submit' name='accept_task' value='Accept'>";
+                            echo "<input type='submit' name='decline_task' value='Decline'>";
+                            echo "</form>";
+                        }
+                    } else {
+                        echo "<p>" . $agenda_item["task"] . "</p>";
                     }
-    
-                    echo "</div>";
-                    $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                 }
-                ?>
-            </div>
-            <?php if($isAdmin || $isManager): ?>
-            
-            <div class="agenda-form">
-                <h2>Fill in agenda</h2>
-                <a href="filinagenda.php" class="formButton">Fill in agenda</a>
-            </div>
-        <?php endif; ?>
+            }
+            echo "</div>";
+        }
+        echo "</div>";
+        ?>
+    </div>
+    <?php if($isAdmin || $isManager): ?>
+        <div class="agenda-form">
+            <h2>Fill in agenda</h2>
+            <a href="filinagenda.php" class="formButton">Fill in agenda</a>
         </div>
+    <?php endif; ?>
+</div>
+
     </div>
 </body>
 </html>
