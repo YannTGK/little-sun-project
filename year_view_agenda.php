@@ -159,59 +159,49 @@ $pdo = null;
         </div>
 
         <div class="holder">
-            <?php
-                $currentYear = date("Y");
-                $numDaysInYear = date("z", mktime(0, 0, 0, 12, 31, $currentYear)) + 1;
+        <?php
+$currentYear = date("Y");
+$numDaysInYear = date("z", mktime(0, 0, 0, 12, 31, $currentYear)) + 1;
 
-                echo "<div class='agenda'>";
-                for ($dayOfYear = 1; $dayOfYear <= $numDaysInYear; $dayOfYear++) {
-                    $currentDate = date("Y-m-d", mktime(0, 0, 0, 1, $dayOfYear, $currentYear));
-                    echo "<div class='day'>";
-                    echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-                    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
-                    for ($hour = 7; $hour <= 19; $hour++) {
-                        echo "<div class='hour-block'>";
-                        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-                        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-                            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-                            foreach ($agenda_items_for_hour as $agenda_item) {
-                                if (isset($agenda_item["username"])) {
-                                    $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                                    $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                                    if ($hour >= $starting_hour && $hour < $end_hour) {
-                                        $bg_color = "red";
-                                    } else {
-                                        $bg_color = "";
-                                    }
-                                    if ($agenda_item["accept"] === null) {
-                                        $bg_color = "grey";
-                                    } elseif ($agenda_item["accept"] == 1) {
-                                        $bg_color = "green";
-                                    } elseif ($agenda_item["accept"] == 0) {
-                                        $bg_color = "red";
-                                    }
-                                    echo "<p style='background-color: $bg_color;'>";
-                                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] ."</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
-                                    if ($agenda_item["accept"] === null) {
-                                        echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
-                                        echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
-                                        echo "<input type='submit' name='accept_task' value='Accept'>";
-                                        echo "<input type='submit' name='decline_task' value='Decline'>";
-                                        echo "</form>";
-                                    }
-                                    
-                                } else {
-                                    echo "<p>" . $agenda_item["task"] . "</p>";
-                                }
-                            }
-                        }
-                        echo "</div>";
+echo "<div class='agenda'>";
+for ($dayOfYear = 1; $dayOfYear <= $numDaysInYear; $dayOfYear++) {
+    $currentDate = date("Y-m-d", mktime(0, 0, 0, 1, $dayOfYear, $currentYear));
+    echo "<div class='day'>";
+    echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
+    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
+    for ($hour = 7; $hour <= 19; $hour++) {
+        echo "<div class='hour-block'>";
+        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
+        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
+            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
+            foreach ($agenda_items_for_hour as $agenda_item) {
+                echo "<p>";
+                if (isset($agenda_item["username"])) {
+                    $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
+                    $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
+                    if ($hour >= $starting_hour && $hour < $end_hour) {
+                        $bg_color = "red";
+                    } else {
+                        $bg_color = "";
                     }
-                    echo "</div>";
+                    // Always set accept to 1 (accepted)
+                    $agenda_item["accept"] = 1;
+                    $bg_color = "green"; // Set background color to green for accepted items
+                    echo "<p style='background-color: $bg_color;'>";
+                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
+                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] ."</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
+                } else {
+                    echo $agenda_item["task"];
                 }
-                echo "</div>";
-            ?>
+                echo "</p>"; // Close .task-item
+            }
+        }
+        echo "</div>";
+    }
+    echo "</div>";
+}
+echo "</div>";
+?>
 
             <?php if($isAdmin || $isManager): ?>
               
