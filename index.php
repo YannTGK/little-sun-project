@@ -62,7 +62,8 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
 
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
-                    
+                    <a href="reports.php">reports</a>
+
                         <h2>Add Personnel</h2>
                         <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personnel, ensuring your team is optimized wherever the job takes them.</p>
                         <span class="editLinks">
@@ -80,7 +81,6 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
    
                     </div>
                 <?php endif; ?>
-                <a href="reports.php">reports</a>
                 <div class="article">
                     
                     <h2>Check in</h2>
