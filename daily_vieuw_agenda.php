@@ -60,18 +60,6 @@ function fetchAgendaItems($pdo, $username, $isManager) {
     return $agenda_items_by_day_and_hour;
 }
 
-function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day) {
-    $query = "INSERT INTO agenda (user_id, username, task, startinghour, endhour, day) VALUES (:user_id, :username, :task, :startinghour, :endhour, :day)";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':task', $task);
-    $stmt->bindParam(':startinghour', $startinghour);
-    $stmt->bindParam(':endhour', $endhour);
-    $stmt->bindParam(':day', $day);
-    $stmt->execute();
-}
-
 function acceptOrDeclineTask($pdo, $task_id, $accept) {
     $query = "UPDATE agenda SET accept = :accept WHERE id = :task_id";
     $stmt = $pdo->prepare($query);
@@ -93,15 +81,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         acceptOrDeclineTask($pdo, $_POST["task_id"], 1);
     } elseif (isset($_POST["decline_task"])) {
         acceptOrDeclineTask($pdo, $_POST["task_id"], 0);
-    } else {
-        $username = $_POST["username"];
-        $task = $_POST["task"];
-        $startinghour = $_POST["startinghour"];
-        $endhour = $_POST["endhour"];
-        $day = $_POST["day"];
-        // Get user_id based on the selected username
-        $user_id = $_POST["user_id"];
-        insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day);
     }
     header("Location: ". htmlspecialchars($_SERVER["PHP_SELF"]));
     exit;
@@ -140,7 +119,7 @@ $pdo = null;
                     <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
                 </div>
                 <div class="editLink">
-                    <a class="formButton" href="year_view_agenda.php">Yearly vieuw</a>
+                    <a class="formButton" href="year_view_agenda.php">Yearly view</a>
                 </div>
             </div>
             <form class="nav2" action="" method="post">
@@ -219,58 +198,14 @@ $pdo = null;
                 }
                 ?>
             </div>
-        
-    
             <?php if($isAdmin || $isManager): ?>
-        
-                <div class="agenda-form">
-                    <h2>Fill in agenda</h2>
-                    <form class="form-a" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-                        <div class="form-group">
-                            <label for="username">Username:</label>
-                            <select class="form-control" id="username" name="username">
-                                <?php foreach($assigned_tasks as $task): ?>
-                                    <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <input type="hidden" name="user_id" id="user_id" value="">
-                        <div class="form-group">
-                            <label for="task">Task:</label>
-                            <select class="form-control" id="task" name="task">
-                                <?php foreach($assigned_tasks as $task): ?>
-                                    <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="startinghour">Start hour:</label>
-                            <input type="time" class="form-control" id="startinghour" name="startinghour">
-                        </div>
-                        <div class="form-group">
-                            <label for="endhour">End hour:</label>
-                            <input type="time" class="form-control" id="endhour" name="endhour">
-                        </div>
-                        <div class="form-group">
-                            <label for="day">Date:</label>
-                            <input type="date" class="form-control" id="day" name="day">
-                        </div>
-                        <div class="editLink">
-                            <button type="submit" class="formButton">save</button>   
-                        </div>
-                        
-        
-                    </form>
-                </div>
-            <?php endif; ?>
+            
+            <div class="agenda-form">
+                <h2>Fill in agenda</h2>
+                <a href="filinagenda.php" class="formButton">Fill in agenda</a>
+            </div>
+        <?php endif; ?>
         </div>
     </div>
-    
-    <script>
-        document.getElementById('username').addEventListener('change', function() {
-            var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
-            document.getElementById('user_id').value = userId;
-        });
-    </script>
 </body>
 </html>

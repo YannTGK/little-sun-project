@@ -217,41 +217,7 @@ $pdo = null;
               
                 <div class="agenda-form">
                     <h2>Fill in agenda</h2>
-                    <form class="form-a" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-                        <div class="form-group">
-                            <label for="username">Username:</label>
-                            <select class="form-control" id="username" name="username">
-                            <?php foreach($assigned_tasks as $task): ?>
-                                    <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <input type="hidden" name="user_id" id="user_id" value="">
-                        <div class="form-group">
-                            <label for="task">Task:</label>
-                            <select class="form-control" id="task" name="task">
-                            <?php foreach($unique_task_types as $task): ?>
-                                    <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="startinghour">Start hour:</label>
-                            <input type="time" class="form-control" id="startinghour" name="startinghour">
-                        </div>
-                        <div class="form-group">
-                            <label for="endhour">End hour:</label>
-                            <input type="time" class="form-control" id="endhour" name="endhour">
-                        </div>
-                        <div class="form-group">
-                            <label for="day">Date:</label>
-                            <input type="date" class="form-control" id="day" name="day">
-                        </div>
-                        <div class="editLink">
-                            <button type="submit" class="formButton">Save</button>
-                        </div>
-                      
-                    </form>
+                    <a href="filinagenda.php" class="formButton">Fill in agenda</a>
                 </div>
             <?php endif; ?>
         </div>
