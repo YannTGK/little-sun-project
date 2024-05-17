@@ -22,9 +22,9 @@ $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password
 // Define a function to fetch assigned tasks
 function fetchAssignedTasks($pdo) {
     $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
-               FROM account a 
-               JOIN assignedtasks at ON a.id = at.user_id 
-               JOIN tasks t ON at.tasktype_id = t.id";
+              FROM account a 
+              JOIN assignedtasks at ON a.id = at.user_id 
+              JOIN tasks t ON at.tasktype_id = t.id";
     $stmt = $pdo->prepare($query);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -39,6 +39,17 @@ $query_vacation = "SELECT * FROM vacation WHERE accepted = 1";
 $stmt_vacation = $pdo->prepare($query_vacation);
 $stmt_vacation->execute();
 $vacation_items = $stmt_vacation->fetchAll(PDO::FETCH_ASSOC);
+
+// Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
+
+$assigned_tasks = fetchAssignedTasks($pdo);
+
+// Groepeer taken per gebruiker
+$user_tasks = [];
+foreach ($assigned_tasks as $task) {
+    $user_tasks[$task['user_id']][] = $task['TaskType'];
+}
 
 $errorMessage = ''; // Initialiseer de foutmelding
 
@@ -64,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $task = $_POST["task"];
         $startinghour = $_POST["startinghour"];
         $endhour = $_POST["endhour"];
-
+        
         insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day);
         header("Location: filinagenda.php");
         exit;
@@ -117,17 +128,15 @@ function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endh
                     <label for="username">Username:</label>
                     <select class="form-control" id="username" name="username">
                         <?php 
-                            $usedNames = array();
-                            foreach($assigned_tasks as $task): 
-                                $username = $task['username'];
-                                $userId = $task['id'];
-                                if (!in_array($username, $usedNames)):
-                            ?>
+                        $printed_usernames = array();
+                        foreach($assigned_tasks as $task): 
+                            if (!in_array($task['username'], $printed_usernames)):
+                                $printed_usernames[] = $task['username'];
+                        ?>
                             <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
                         <?php 
-                                $usedNames[] = $username;
-                                endif;
-                            endforeach; 
+                            endif;
+                        endforeach; 
                         ?>
                     </select>
                 </div>
@@ -135,9 +144,7 @@ function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endh
                 <div class="form-group">
                     <label for="task">Task:</label>
                     <select class="form-control" id="task" name="task">
-                        <?php foreach($assigned_tasks as $task): ?>
-                            <option value="<?php echo $task['TaskType']; ?>"><?php echo $task['TaskType']; ?></option>
-                        <?php endforeach; ?>
+                        <!-- Tasks will be populated dynamically using JavaScript -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -152,7 +159,7 @@ function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endh
                     <label for="day">Date:</label>
                     <input type="date" class="form-control" id="day" name="day">
                 </div>
-
+                
                 <div class="editLink">
                     <button type="submit" class="formButton">Save</button>
                 </div>
@@ -160,11 +167,31 @@ function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endh
         </div>
     </div>
 
+    </div>
+
     <script>
+        const userTasks = <?php echo json_encode($user_tasks); ?>;
+
         document.getElementById('username').addEventListener('change', function() {
-            var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
+            const userId = this.options[this.selectedIndex].getAttribute('data-user-id');
             document.getElementById('user_id').value = userId;
+
+            const taskDropdown = document.getElementById('task');
+            taskDropdown.innerHTML = ''; // Leeg de bestaande opties
+
+            if (userTasks[userId]) {
+                userTasks[userId].forEach(task => {
+                    const option = document.createElement('option');
+                    option.value = task;
+                    option.textContent = task;
+                    taskDropdown.appendChild(option);
+                });
+            }
         });
+
+        // Trigger de change event bij het laden van de pagina om de taken voor de standaard geselecteerde gebruiker weer te geven
+        document.getElementById('username').dispatchEvent(new Event('change'));
     </script>
 </body>
 </html>
+

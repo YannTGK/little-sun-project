@@ -217,14 +217,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a class="kruis" href="./calendar.php"></a>
         </div>
         <div class="dropdown">
-    <button class="dropdown-button">View Options</button>
-    <div class="dropdown-content">
-        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
-        <a class="formButton" href="visibleagenda.php">Weekly view</a>
-        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-    </div>
-</div>
+            <button class="dropdown-button">View Options</button>
+            <div class="dropdown-content">
+                <a class="formButton" href="daily_view_agenda.php">Daily view</a>
+                <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+            </div>
+        </div>
 
         <div class="holder">
             <table class="agenda">
@@ -245,13 +245,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     while ($currentDate <= $endOfMonth) {
                         echo "<tr>";
                         for ($i = 0; $i < 7; $i++) {
-                            echo "<td";
-                            if (date('Y-m-d', strtotime($currentDate)) == date('Y-m-d')) {
-                                echo " class='current-day'";
-                            }
-                            echo ">";
-                            echo "<div class='date'>" . date('j', strtotime($currentDate)) . "</div>";
-
+                            echo "<td>";
+                            echo "<div class='date'><a href='daily_vieuw_agenda.php?date=" . date('Y-m-d', strtotime($currentDate)) . "'>" . date('j', strtotime($currentDate)) . "</a></div>";
+                            
+            
                             if (isset($agenda_items_by_day_and_hour[$currentDate])) {
                                 foreach ($agenda_items_by_day_and_hour[$currentDate] as $hour => $agenda_items_for_hour) {
                                     foreach ($agenda_items_for_hour as $agenda_item) {
