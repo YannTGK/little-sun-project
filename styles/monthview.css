@@ -1,0 +1,113 @@
+.calendarActive, .calendarActive p {
+    background-color: white;
+    color:  #FFDD00;
+}
+
+.navItems .calendar {
+    background-image: url(../images/active_calendar.svg);
+    
+}
+
+.nav2 {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin: 24px 0px;
+    background-color: white;
+}
+
+.formButton {
+    color: black;
+}
+
+.holder {
+    margin-bottom: 32px;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Algemene opmaak */
+.screen {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+
+}
+
+.title h1 {
+    margin-left: 200px;
+}
+
+.nav2 {
+margin-left: 200px;
+}
+
+.editLink {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.formButton {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #FFDD00;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.holder {
+    margin-left: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.agenda {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.agenda th, .agenda td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.agenda th {
+    background-color: #f0f0f0;
+}
+
+.agenda .date {
+    font-weight: bold;
+}
+
+.agenda .event {
+    background-color: green;
+    color: #fff;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 3px;
+}
+
+.agenda-form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.agenda-form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.current-day {
+    position: relative;
+    background-color: rgb(223, 223, 223);
+}

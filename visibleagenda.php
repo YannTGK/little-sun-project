@@ -121,7 +121,7 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
         <div class="nav2holder">
             <div class="nav2">
                 <div class="editLink">
-                    <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
+                    <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
                 </div>
                 <div class="editLink">
                     <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
@@ -147,55 +147,61 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
 
         <div class="holder">
             <div class="agenda">
-            <?php
-$startOfWeek = date('Y-m-d', strtotime('monday this week'));
+                <?php
+                $startOfWeek = date('Y-m-d', strtotime('monday this week'));
 
-if (isset($_POST['prev_week'])) {
-    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
-} elseif (isset($_POST['next_week'])) {
-    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
-}
-
-$endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
-
-$currentDate = $startOfWeek;
-while ($currentDate <= $endOfWeek) {
-    echo "<div class='day'>";
-    echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
-
-    for ($hour = 7; $hour <= 19; $hour++) {
-        echo "<div class='hour-block'>";
-        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-            foreach ($agenda_items_for_hour as $agenda_item) {
-                if (isset($agenda_item["username"])) {
-                    $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                    $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                    if ($hour >= $starting_hour && $hour < $end_hour) {
-                        $bg_color = "red";
-                    } else {
-                        $bg_color = "";
-                    }
-                    // Always set accept to 1 (accepted)
-                    $agenda_item["accept"] = 1;
-                    $bg_color = "green"; // Set background color to green for accepted items
-                    echo "<p style='background-color: $bg_color;'>";
-                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
-                } else {
-                    echo "<p>" . $agenda_item["task"] . "</p>";
+                if (isset($_POST['prev_week'])) {
+                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
+                } elseif (isset($_POST['next_week'])) {
+                    $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +1 week'));
                 }
-            }
-        }
-        echo "</div>";
-    }
-    echo "</div>";
-    $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
-}
-?>
 
+                $endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days'));
+
+                $currentDate = $startOfWeek;
+
+                // Print table header
+                echo "<table class='table table-bordered'>";
+                echo "<thead><tr>";
+                echo "<th>Time</th>";
+                for ($day = 0; $day < 7; $day++) {
+                    $date = date('Y-m-d', strtotime("$startOfWeek +$day days"));
+                    $class = ($date == date('Y-m-d')) ? 'current-day' : ''; // Controleer of de dag overeenkomt met de huidige datum
+                    echo "<th class='$class'>" . date('l', strtotime($date)) . "<br>" . date('F j, Y', strtotime($date)) . "</th>";
+                }
+                echo "</tr></thead>";
+                echo "<tbody>";
+
+                // Print table rows for each hour
+                for ($hour = 7; $hour <= 19; $hour++) {
+                    echo "<tr>";
+                    echo "<td>" . $hour . ":00 - " . ($hour + 1) . ":00</td>";
+
+                    for ($day = 0; $day < 7; $day++) {
+                        $date = date('Y-m-d', strtotime("$startOfWeek +$day days"));
+                        echo "<td>";
+                        if (isset($agenda_items_by_day_and_hour[$date]) && isset($agenda_items_by_day_and_hour[$date][$hour])) {
+                            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$date][$hour];
+                            foreach ($agenda_items_for_hour as $agenda_item) {
+                                $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
+                                $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
+                                if ($hour >= $starting_hour && $hour < $end_hour) {
+                                    $bg_color = "green"; // Set background color to green for accepted items
+                                    echo "<div style='background-color: $bg_color;'>";
+                                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "<br>";
+                                    echo "Start: " . $agenda_item['startinghour'] . "<br>";
+                                    echo "End: " . $agenda_item['endhour'];
+                                    echo "</div>";
+                                }
+                            }
+                        }
+                        echo "</td>";
+                    }
+                    echo "</tr>";
+                }
+                echo "</tbody>";
+                echo "</table>";
+                ?>
             </div>
             <?php if($isAdmin || $isManager): ?>
                 <div class="agenda-form">

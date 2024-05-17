@@ -135,88 +135,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/agenda.css">
+    <link rel="stylesheet" href="styles/monthview.css">
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
-        <div class="title">
-            <h1>Monthly View</h1>
-            <a class="kruis" href="./calendar.php"></a>
+    <div class="title">
+        <h1>Monthly View</h1>
+        <a class="kruis" href="./calendar.php"></a>
+    </div>
+    <div class="nav2">
+        <div class="editLink">
+            <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
         </div>
-        <div class="nav2">
-            <div class="editLink">
-                <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
-            </div>
-            <div class="editLink">
-                <a class="formButton" href="visibleagenda.php">Weekly view</a>
-            </div>
-            <div class="editLink">
-                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-            </div>
+        <div class="editLink">
+            <a class="formButton" href="visibleagenda.php">Weekly view</a>
         </div>
+        <div class="editLink">
+            <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+        </div>
+    </div>
 
-        <div class="holder">
-           
-            <div class="agenda">
-            <?php
-$startOfMonth = date('Y-m-d', strtotime('first day of this month'));
-$endOfMonth = date('Y-m-d', strtotime('last day of this month'));
-$currentDate = $startOfMonth;
-while ($currentDate <= $endOfMonth) {
-    echo "<div class='day'>";
-    echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
+    <div class="holder">
+        <table class="agenda">
+            <thead>
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $startOfMonth = date('Y-m-d', strtotime('first day of this month'));
+                $endOfMonth = date('Y-m-d', strtotime('last day of this month'));
+                $currentDate = $startOfMonth;
+                while ($currentDate <= $endOfMonth) {
+                    echo "<tr>";
+                    for ($i = 0; $i < 7; $i++) {
+                        echo "<td";
+                        if (date('Y-m-d', strtotime($currentDate)) == date('Y-m-d')) {
+                            echo " class='current-day'";
+                        }
+                        echo ">";
+                        echo "<div class='date'>" . date('j', strtotime($currentDate)) . "</div>";
 
-    for ($hour = 7; $hour <= 19; $hour++) {
-        echo "<div class='hour-block'>";
-        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-            foreach ($agenda_items_for_hour as $agenda_item) {
-                echo "<p>";
-                if (isset($agenda_item["username"])) {
-                    $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                    $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                    if ($hour >= $starting_hour && $hour < $end_hour) {
-                        $bg_color = "red";
-                    } else {
-                        $bg_color = "";
+                        if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                            foreach ($agenda_items_by_day_and_hour[$currentDate] as $hour => $agenda_items_for_hour) {
+                                foreach ($agenda_items_for_hour as $agenda_item) {
+                                    echo "<div class='event'>" . $agenda_item["task"] . " - " . $agenda_item["username"] . "</div>";
+                                }
+                            }
+                        }
+                        echo "</td>";
+                        $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                     }
-                    // Always set accept to 1 (accepted)
-                    $agenda_item["accept"] = 1;
-                    $bg_color = "green"; // Set background color to green for accepted items
-                    echo "<p style='background-color: $bg_color;'>";
-                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". " End hour: " . $agenda_item['endhour'] . "</p>";
-                } else {
-                    echo $agenda_item["task"];
+                    echo "</tr>";
                 }
-                echo "</p>"; // Close .task-item
-            }
-        }
-        echo "</div>";
-    }
+                ?>
+            </tbody>
+        </table>
 
-    echo "</div>";
-    $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
-}
-?>
-
+        <?php if($isAdmin || $isManager): ?>
+        
+            <div class="agenda-form">
+                <h2>Fill in agenda</h2>
+                <a href="filinagenda.php" class="formButton">Fill in agenda</a>
             </div>
-
-            <?php if($isAdmin || $isManager): ?>
-            
-                <div class="agenda-form">
-                    <h2>Fill in agenda</h2>
-                    <a href="filinagenda.php" class="formButton">Fill in agenda</a>
-                </div>
-            <?php endif; ?>
-
-        </div>
+        <?php endif; ?>
 
     </div>
+</div>
     
     <script>
         document.getElementById('username').addEventListener('change', function() {

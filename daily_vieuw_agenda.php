@@ -26,45 +26,40 @@ function fetchAssignedTasks($pdo) {
 }
 
 // Define a function to fetch agenda items for the logged-in user or all users if Manager
-function fetchAgendaItems($pdo, $username, $isManager) {
+function fetchAgendaItems($pdo, $username, $isManager, $date) {
     if ($isManager) {
-        $query = "SELECT * FROM agenda";
+        $query = "SELECT * FROM agenda WHERE day = :day";
         $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':day', $date, PDO::PARAM_STR);
         $stmt->execute();
         $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } else {
-        $query = "SELECT * FROM agenda WHERE username = :username";
+        $query = "SELECT * FROM agenda WHERE username = :username AND day = :day";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':day', $date, PDO::PARAM_STR);
         $stmt->execute();
         $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $agenda_items_by_day_and_hour = [];
+    $agenda_items_by_hour = [];
 
     foreach ($agenda_items as $item) {
-        $day = $item['day'];
         $hour = intval(substr($item['startinghour'], 0, 2)); // Extract hour from starting hour
-
-        if (!isset($agenda_items_by_day_and_hour[$day])) {
-            $agenda_items_by_day_and_hour[$day] = [];
+        if (!isset($agenda_items_by_hour[$hour])) {
+            $agenda_items_by_hour[$hour] = [];
         }
-
-        if (!isset($agenda_items_by_day_and_hour[$day][$hour])) {
-            $agenda_items_by_day_and_hour[$day][$hour] = [];
-        }
-
-        $agenda_items_by_day_and_hour[$day][$hour][] = $item;
+        $agenda_items_by_hour[$hour][] = $item;
     }
 
-    return $agenda_items_by_day_and_hour;
+    return $agenda_items_by_hour;
 }
 
-function acceptOrDeclineTask($pdo, $task_id, $accept) {
-    $query = "UPDATE agenda SET accept = :accept WHERE id = :task_id";
+// Zet standaard de accept status op 1 voor alle taken
+function setDefaultAcceptStatus($pdo, $date) {
+    $query = "UPDATE agenda SET accept = 1 WHERE day = :day AND accept IS NULL";
     $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':accept', $accept, PDO::PARAM_INT);
-    $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+    $stmt->bindParam(':day', $date, PDO::PARAM_STR);
     $stmt->execute();
 }
 
@@ -73,18 +68,14 @@ $assigned_tasks = fetchAssignedTasks($pdo);
 // Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
-// Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
-$agenda_items_by_day_and_hour = fetchAgendaItems($pdo, $username, $isManager);
+// Huidige datum voor de dagweergave
+$currentDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["accept_task"])) {
-        acceptOrDeclineTask($pdo, $_POST["task_id"], 1);
-    } elseif (isset($_POST["decline_task"])) {
-        acceptOrDeclineTask($pdo, $_POST["task_id"], 0);
-    }
-    header("Location: ". htmlspecialchars($_SERVER["PHP_SELF"]));
-    exit;
-}
+// Zet de standaard accept status voor de huidige datum
+setDefaultAcceptStatus($pdo, $currentDate);
+
+// Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
+$agenda_items_by_hour = fetchAgendaItems($pdo, $username, $isManager, $currentDate);
 
 $pdo = null;
 ?>
@@ -94,7 +85,7 @@ $pdo = null;
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Agenda</title>
+    <title>Daily Agenda</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
@@ -107,91 +98,68 @@ $pdo = null;
 
     <div class="screen">
         <div class="title">
-            <h1>Daily View</h1>
+            <h1>Daily View - <?php echo date('l, F j, Y', strtotime($currentDate)); ?></h1>
             <a class="kruis" href="./calendar.php"></a>
         </div>
         <div class="nav2holder">
             <div class="nav2">
                 <div class="editLink">
-                    <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                    <a class="formButton" href="daily_view_agenda.php?date=<?php echo date('Y-m-d', strtotime($currentDate . ' -1 day')); ?>">Previous day</a>
+                </div>
+                <div class="editLink">
+                    <a class="formButton" href="daily_view_agenda.php?date=<?php echo date('Y-m-d', strtotime($currentDate . ' +1 day')); ?>">Next day</a>
                 </div>
                 <div class="editLink">
                     <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
                 </div>
                 <div class="editLink">
+                    <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                </div>
+                <div class="editLink">
                     <a class="formButton" href="year_view_agenda.php">Yearly view</a>
                 </div>
             </div>
-            <form class="nav2" action="" method="post">
-                <div class="editLink">
-                    <input class="formButton2" type="submit" name="prev_week" value="Day before">
-                </div>
-                <div class="editLink">
-                    <input class="formButton2" type="submit" name="next_week" value="Day after">
-                </div>
-            </form>
         </div>
 
         <div class="holder">
-    <div class="agenda">
-        <?php
-        // Alleen de huidige dag tonen
-        $currentDate = date('Y-m-d');
-
-        echo "<div class='day'>";
-        echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-        echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
-
-        for ($hour = 7; $hour <= 19; $hour++) {
-            echo "<div class='hour-block'>";
-            echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-
-            if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-                $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-                foreach ($agenda_items_for_hour as $agenda_item) {
-                    if (isset($agenda_item["username"])) {
-                        $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                        $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                        if ($hour >= $starting_hour && $hour < $end_hour) {
-                            $bg_color = "red";
-                        } else {
-                            $bg_color = "";
+            <div class="agenda">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        for ($hour = 7; $hour < 20; $hour++) {
+                            echo "<tr>";
+                            echo "<td>" . sprintf('%02d:00 - %02d:00', $hour, $hour + 1) . "</td>";
+                            echo "<td>";
+                            if (isset($agenda_items_by_hour[$hour])) {
+                                foreach ($agenda_items_by_hour[$hour] as $agenda_item) {
+                                    $bg_color = $agenda_item["accept"] == 1 ? "green" : ($agenda_item["accept"] == 0 ? "red" : "grey");
+                                    echo "<div style='background-color: $bg_color; padding: 5px; margin-bottom: 5px;'>";
+                                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "<br>";
+                                    echo "Start: " . $agenda_item['startinghour'] . "<br>";
+                                    echo "End: " . $agenda_item['endhour'];
+                                    echo "</div>";
+                                }
+                            }
+                            echo "</td>";
+                            echo "</tr>";
                         }
-                        if ($agenda_item["accept"] === null) {
-                            $bg_color = "grey";
-                        } elseif ($agenda_item["accept"] == 1) {
-                            $bg_color = "green";
-                        } elseif ($agenda_item["accept"] == 0) {
-                            $bg_color = "red";
-                        }
-                        echo "<p style='background-color: $bg_color;'>";
-                        echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                        echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] . "</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
-                        if ($agenda_item["accept"] === null) {
-                            echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
-                            echo "<input type='hidden' name='task_id' value='" . $agenda_item["id"] . "'>";
-                            echo "<input type='submit' name='accept_task' value='Accept'>";
-                            echo "<input type='submit' name='decline_task' value='Decline'>";
-                            echo "</form>";
-                        }
-                    } else {
-                        echo "<p>" . $agenda_item["task"] . "</p>";
-                    }
-                }
-            }
-            echo "</div>";
-        }
-        echo "</div>";
-        ?>
-    </div>
-    <?php if($isAdmin || $isManager): ?>
-        <div class="agenda-form">
-            <h2>Fill in agenda</h2>
-            <a href="filinagenda.php" class="formButton">Fill in agenda</a>
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php if($isAdmin || $isManager): ?>
+                <div class="agenda-form">
+                    <h2>Fill in agenda</h2>
+                    <a class="formButton" href="filinagenda.php">Go to form</a>
+                </div>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
-</div>
-
     </div>
 </body>
 </html>
