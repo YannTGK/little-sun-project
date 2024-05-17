@@ -92,6 +92,23 @@ $pdo = null;
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/agenda.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .date-container {
+            display: flex;
+            align-items: center;
+            margin-right: 65%;
+        }
+        .date-container input {
+            display: none; 
+        }
+        .date-container i {
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
@@ -99,16 +116,13 @@ $pdo = null;
     <div class="screen">
         <div class="title">
             <h1>Daily View - <?php echo date('l, F j, Y', strtotime($currentDate)); ?></h1>
-            <a class="kruis" href="./calendar.php"></a>
+            <div class="date-container">
+                <input type="text" id="datepicker" placeholder="Choose a date">
+                <i class="fa fa-calendar" id="calendarIcon"></i>
+            </div>
         </div>
         <div class="nav2holder">
             <div class="nav2">
-                <div class="editLink">
-                    <a class="formButton" href="daily_view_agenda.php?date=<?php echo date('Y-m-d', strtotime($currentDate . ' -1 day')); ?>">Previous day</a>
-                </div>
-                <div class="editLink">
-                    <a class="formButton" href="daily_view_agenda.php?date=<?php echo date('Y-m-d', strtotime($currentDate . ' +1 day')); ?>">Next day</a>
-                </div>
                 <div class="editLink">
                     <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
                 </div>
@@ -161,5 +175,21 @@ $pdo = null;
             <?php endif; ?>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var datePicker = flatpickr("#datepicker", {
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates, dateStr, instance) {
+                    window.location.href = "?date=" + dateStr;
+                }
+            });
+
+            document.getElementById('calendarIcon').addEventListener('click', function() {
+                datePicker.open();
+            });
+        });
+    </script>
 </body>
 </html>
