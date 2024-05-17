@@ -37,6 +37,7 @@ h1{
     margin-top: 20px; /* 20px vanaf de navigatie */
 }
 .agenda {
+    margin-left: 220px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
