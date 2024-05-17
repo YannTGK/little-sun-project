@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $task = $_POST["task"];
         $startinghour = $_POST["startinghour"];
         $endhour = $_POST["endhour"];
-        
+
         insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day);
         header("Location: filinagenda.php");
         exit;
@@ -117,9 +117,19 @@ function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endh
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <select class="form-control" id="username" name="username">
-                        <?php foreach($assigned_tasks as $task): ?>
+                        <?php 
+                            $usedNames = array();
+                            foreach($assigned_tasks as $task): 
+                                $username = $task['username'];
+                                $userId = $task['id'];
+                                if (!in_array($username, $usedNames)):
+                            ?>
                             <option value="<?php echo $task['username']; ?>" data-user-id="<?php echo $task['id']; ?>"><?php echo $task['username']; ?></option>
-                        <?php endforeach; ?>
+                        <?php 
+                                $usedNames[] = $username;
+                                endif;
+                            endforeach; 
+                        ?>
                     </select>
                 </div>
                 <input type="hidden" name="user_id" id="user_id" value="">
@@ -143,7 +153,7 @@ function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endh
                     <label for="day">Date:</label>
                     <input type="date" class="form-control" id="day" name="day">
                 </div>
-                
+
                 <div class="editLink">
                     <button type="submit" class="formButton">Save</button>
                 </div>
