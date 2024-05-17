@@ -109,6 +109,23 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/agenda.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .date-container {
+            display: flex;
+            align-items: center;
+            margin-right: 85%;
+        }
+        .date-container input {
+            display: none; 
+        }
+        .date-container i {
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
@@ -116,7 +133,10 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
     <div class="screen">
         <div class="title">
             <h1>Weekly View</h1>
-            <a class="kruis" href="./calendar.php"></a>
+            <div class="date-container">
+                <input type="text" id="datepicker" placeholder="Choose a date">
+                <i class="fa fa-calendar" id="calendarIcon"></i>
+            </div>
         </div>
         <div class="nav2holder">
             <div class="nav2">
@@ -130,25 +150,20 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
                     <a class="formButton" href="year_view_agenda.php">Yearly view</a>
                 </div>
             </div>
-            <form class="nav2" action="" method="post">
-                <div class="editLink">
-                    <input class="formButton2" type="submit" name="prev_week" value="Previous week">
-                </div>
-                <div class="editLink">
-                    <input class="formButton2" type="submit" name="next_week" value="Coming week">
-                </div>
-            </form>
+          
         </div>
 
-        <!-- Foutmelding weergeven -->
-        <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
+  <!-- Foutmelding weergeven -->
+  <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
             <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
         <?php endif; ?>
 
         <div class="holder">
             <div class="agenda">
                 <?php
-                $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+                // Haal de geselecteerde datum op uit de URL
+                $selectedDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
+                $startOfWeek = date('Y-m-d', strtotime('monday this week', strtotime($selectedDate)));
 
                 if (isset($_POST['prev_week'])) {
                     $startOfWeek = date('Y-m-d', strtotime($startOfWeek . ' -1 week'));
@@ -211,5 +226,20 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
             <?php endif; ?>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var datePicker = flatpickr("#datepicker", {
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates, dateStr, instance) {
+                    window.location.href = "?date=" + dateStr;
+                }
+            });
+
+            document.getElementById('calendarIcon').addEventListener('click', function() {
+                datePicker.open();
+            });
+        });
+    </script>
 </body>
 </html>

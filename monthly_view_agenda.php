@@ -100,6 +100,17 @@ $unique_task_types = fetchUniqueTaskTypes($pdo);
 // Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
+// Bepaal de startdatum en einddatum van de huidige maand
+if(isset($_GET['month'])) {
+    $selectedMonth = $_GET['month'];
+    $startOfMonth = date('Y-m-d', strtotime('first day of ' . $selectedMonth));
+    $endOfMonth = date('Y-m-d', strtotime('last day of ' . $selectedMonth));
+} else {
+    $selectedMonth = date('Y-m', strtotime('first day of this month'));
+    $startOfMonth = date('Y-m-d', strtotime('first day of this month'));
+    $endOfMonth = date('Y-m-d', strtotime('last day of this month'));
+}
+
 // Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
 $agenda_items_by_day_and_hour = fetchAgendaItems($pdo, $username, $isManager);
 
@@ -121,7 +132,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ". htmlspecialchars($_SERVER["PHP_SELF"]));
     exit;
 }
-
 ?>
 
 <!doctype html>
@@ -136,82 +146,98 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/monthview.css">
+    <style>
+        .title {
+            display: flex;
+            align-items: center;
+        }
+        .title h1 {
+            margin-right: 10px;
+        }
+        .title .nav-arrows {
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
-    <div class="title">
-        <h1>Monthly View</h1>
-        <a class="kruis" href="./calendar.php"></a>
-    </div>
-    <div class="nav2">
-        <div class="editLink">
-            <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
+        <div class="title">
+            <div class="nav-arrows">
+                <a href="?month=<?php echo date('Y-m', strtotime('-1 month', strtotime($startOfMonth))); ?>">&#10094;</a>
+            </div>
+            <h1>Monthly View</h1><h2><?php echo date('F Y', strtotime($selectedMonth)); ?></h2>
+            <div class="nav-arrows">
+                <a href="?month=<?php echo date('Y-m', strtotime('+1 month', strtotime($startOfMonth))); ?>">&#10095;</a>
+            </div>
+            <a class="kruis" href="./calendar.php"></a>
         </div>
-        <div class="editLink">
-            <a class="formButton" href="visibleagenda.php">Weekly view</a>
+        <div class="nav2">
+            <div class="editLink">
+                <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
+            </div>
+            <div class="editLink">
+                <a class="formButton" href="visibleagenda.php">Weekly view</a>
+            </div>
+            <div class="editLink">
+                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+            </div>
         </div>
-        <div class="editLink">
-            <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-        </div>
-    </div>
 
-    <div class="holder">
-        <table class="agenda">
-            <thead>
-                <tr>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
-                    <th>Sunday</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $startOfMonth = date('Y-m-d', strtotime('first day of this month'));
-                $endOfMonth = date('Y-m-d', strtotime('last day of this month'));
-                $currentDate = $startOfMonth;
-                while ($currentDate <= $endOfMonth) {
-                    echo "<tr>";
-                    for ($i = 0; $i < 7; $i++) {
-                        echo "<td";
-                        if (date('Y-m-d', strtotime($currentDate)) == date('Y-m-d')) {
-                            echo " class='current-day'";
-                        }
-                        echo ">";
-                        echo "<div class='date'>" . date('j', strtotime($currentDate)) . "</div>";
+        <div class="holder">
+            <table class="agenda">
+                <thead>
+                    <tr>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                        <th>Sunday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $currentDate = $startOfMonth;
+                    while ($currentDate <= $endOfMonth) {
+                        echo "<tr>";
+                        for ($i = 0; $i < 7; $i++) {
+                            echo "<td";
+                            if (date('Y-m-d', strtotime($currentDate)) == date('Y-m-d')) {
+                                echo " class='current-day'";
+                            }
+                            echo ">";
+                            echo "<div class='date'>" . date('j', strtotime($currentDate)) . "</div>";
 
-                        if (isset($agenda_items_by_day_and_hour[$currentDate])) {
-                            foreach ($agenda_items_by_day_and_hour[$currentDate] as $hour => $agenda_items_for_hour) {
-                                foreach ($agenda_items_for_hour as $agenda_item) {
-                                    echo "<div class='event'>" . $agenda_item["task"] . " - " . $agenda_item["username"] . "</div>";
+                            if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                                foreach ($agenda_items_by_day_and_hour[$currentDate] as $hour => $agenda_items_for_hour) {
+                                    foreach ($agenda_items_for_hour as $agenda_item) {
+                                        echo "<div class='event'>" . $agenda_item["task"] . " - " . $agenda_item["username"] . "</div>";
+                                    }
                                 }
                             }
+                            echo "</td>";
+                            $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                         }
-                        echo "</td>";
-                        $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+                        echo "</tr>";
                     }
-                    echo "</tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table>
 
-        <?php if($isAdmin || $isManager): ?>
-        
-            <div class="agenda-form">
-                <h2>Fill in agenda</h2>
-                <a href="filinagenda.php" class="formButton">Fill in agenda</a>
-            </div>
-        <?php endif; ?>
+            <?php if($isAdmin || $isManager): ?>
+            
+                <div class="agenda-form">
+                    <h2>Fill in agenda</h2>
+                    <a href="filinagenda.php" class="formButton">Fill in agenda</a>
+                </div>
+            <?php endif; ?>
 
+        </div>
     </div>
-</div>
-    
+        
     <script>
         document.getElementById('username').addEventListener('change', function() {
             var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
