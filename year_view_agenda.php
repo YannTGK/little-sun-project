@@ -137,6 +137,51 @@ $pdo = null;
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/yearview.css">
+    <style>
+               .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+
+        .dropdown-button {
+            background-color: #FFDD00; 
+            color: white; 
+            padding: 10px 20px; 
+            font-size: 16px;
+            border: none; 
+            cursor: pointer; 
+        }
+
+
+        .dropdown-content {
+            display: none; 
+            position: absolute; 
+            min-width: 160px; 
+            z-index: 1; 
+        }
+
+
+        .dropdown-content a {
+            color: black; 
+            padding: 12px 16px;
+            text-decoration: none; 
+            display: block; 
+        }
+
+        .dropdown-content a:hover {
+            background-color: whitesmoke;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+
+        .dropdown:hover .dropdown-button {
+            background-color: #FFDD00;
+        } 
+    </style>
 
 </head>
 <body>
@@ -147,17 +192,15 @@ $pdo = null;
             <h1>Yearly View</h1>
             <a class="kruis" href="./calendar.php"></a>
         </div>
-        <div class="nav2">
-            <div class="editLink">
-                <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
-            </div>
-            <div class="editLink">
-                <a class="formButton" href="visibleagenda.php">Weekly view</a>
-            </div>
-            <div class="editLink">
-                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-            </div>
-        </div>
+        <div class="dropdown">
+    <button class="dropdown-button">View Options</button>
+    <div class="dropdown-content">
+        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
+        <a class="formButton" href="visibleagenda.php">Weekly view</a>
+        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+    </div>
+</div>
 
         <div class="agenda">
             <?php
