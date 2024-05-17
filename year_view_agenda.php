@@ -14,31 +14,6 @@ $db_name = 'littlesun';
 // Create a PDO instance
 $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
 
-// Define a function to fetch assigned tasks
-function fetchAssignedTasks($pdo) {
-    $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
-               FROM account a 
-               JOIN assignedtasks at ON a.id = at.user_id 
-               JOIN tasks t ON at.tasktype_id = t.id";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function fetchUniqueTaskTypes($pdo) {
-    $query = "SELECT DISTINCT id, TaskType FROM tasks"; // Include the task ID to use later
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function fetchAssignedUsernames($pdo) {
-    $query = "SELECT DISTINCT username, id FROM account"; // Select distinct usernames
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
 // Define a function to fetch agenda items for the logged-in user or all users if Manager
 function fetchAgendaItems($pdo, $username, $isManager) {
     if ($isManager) {
@@ -74,55 +49,12 @@ function fetchAgendaItems($pdo, $username, $isManager) {
     return $agenda_items_by_day_and_hour;
 }
 
-function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day) {
-    $query = "INSERT INTO agenda (user_id, username, task, startinghour, endhour, day) VALUES (:user_id, :username, :task, :startinghour, :endhour, :day)";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':task', $task);
-    $stmt->bindParam(':startinghour', $startinghour);
-    $stmt->bindParam(':endhour', $endhour);
-    $stmt->bindParam(':day', $day);
-    $stmt->execute();
-}
-
-function acceptOrDeclineTask($pdo, $task_id, $accept) {
-    $query = "UPDATE agenda SET accept = :accept WHERE id = :task_id";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':accept', $accept, PDO::PARAM_INT);
-    $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
-    $stmt->execute();
-}
-
-$assigned_tasks = fetchAssignedTasks($pdo);
-$unique_task_types = fetchUniqueTaskTypes($pdo);
-
 // Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
 // Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
 $agenda_items_by_day_and_hour = fetchAgendaItems($pdo, $username, $isManager);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["accept_task"])) {
-        acceptOrDeclineTask($pdo, $_POST["task_id"], 1);
-    } elseif (isset($_POST["decline_task"])) {
-        acceptOrDeclineTask($pdo, $_POST["task_id"], 0);
-    } else {
-        $username = $_POST["username"];
-        $task = $_POST["task"];
-        $startinghour = $_POST["startinghour"];
-        $endhour = $_POST["endhour"];
-        $day = $_POST["day"];
-        // Get user_id based on the selected username
-        $user_id = $_POST["user_id"];
-        insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day);
-    }
-    header("Location: ". htmlspecialchars($_SERVER["PHP_SELF"]));
-    exit;
-}
-
-$pdo = null;
 ?>
 
 <!doctype html>
@@ -138,11 +70,10 @@ $pdo = null;
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/yearview.css">
     <style>
-               .dropdown {
+        .dropdown {
             position: relative;
             display: inline-block;
         }
-
 
         .dropdown-button {
             background-color: #FFDD00; 
@@ -153,14 +84,12 @@ $pdo = null;
             cursor: pointer; 
         }
 
-
         .dropdown-content {
             display: none; 
             position: absolute; 
             min-width: 160px; 
             z-index: 1; 
         }
-
 
         .dropdown-content a {
             color: black; 
@@ -177,12 +106,10 @@ $pdo = null;
             display: block;
         }
 
-
         .dropdown:hover .dropdown-button {
             background-color: #FFDD00;
         } 
     </style>
-
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
@@ -193,14 +120,14 @@ $pdo = null;
             <a class="kruis" href="./calendar.php"></a>
         </div>
         <div class="dropdown">
-    <button class="dropdown-button">View Options</button>
-    <div class="dropdown-content">
-        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
-        <a class="formButton" href="visibleagenda.php">Weekly view</a>
-        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-    </div>
-</div>
+            <button class="dropdown-button">View Options</button>
+            <div class="dropdown-content">
+                <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
+                <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+            </div>
+        </div>
 
         <div class="agenda">
             <?php
@@ -228,13 +155,14 @@ $pdo = null;
                         $bg_color = $hasScheduledItem ? "#e6f7ff" : "";
                         echo "<div class='day-content' style='background-color: $bg_color;'>";
                     }
-                    echo "<p>" . $day . "</p>"; // Toon alleen het nummer van de dag
+                    // Voeg een hyperlink toe naar de dagelijkse weergave en stuur de datum als parameter
+                    echo "<p><a href='daily_vieuw_agenda.php?date=$currentDate'>" . $day . "</a></p>"; 
                     if (isset($agenda_items_by_day_and_hour[$currentDate])) {
                         echo "</div>"; // Close .day-content
                     }
                     echo "</div>"; // Close .day
                 }
-                echo "</div>"; // Close .week
+                echo  "</div>"; // Close .week
                 echo "</div>"; // Close .month
             }
             ?>
