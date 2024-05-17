@@ -94,86 +94,45 @@ $pdo = null;
     <link rel="stylesheet" href="styles/agenda.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .date-container {
-            display: flex;
-            align-items: center;
-            margin-right: 65%;
-        }
-        .date-container input {
-            display: none; 
-        }
-        .date-container i {
-            font-size: 24px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-                .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-
-        .dropdown-button {
-            background-color: #FFDD00; 
-            color: white; 
-            padding: 10px 20px; 
-            font-size: 16px;
-            border: none; 
-            cursor: pointer; 
-        }
-
-
-        .dropdown-content {
-            display: none; 
-            position: absolute; 
-            min-width: 160px; 
-            z-index: 1; 
-        }
-
-
-        .dropdown-content a {
-            color: black; 
-            padding: 12px 16px;
-            text-decoration: none; 
-            display: block; 
-        }
-
-        .dropdown-content a:hover {
-            background-color: whitesmoke;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-
-        .dropdown:hover .dropdown-button {
-            background-color: #FFDD00;
-        }
-    </style>
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
         <div class="title">
-            <h1>Daily View - <?php echo date('l, F j, Y', strtotime($currentDate)); ?></h1>
-            <div class="date-container">
-                <input type="text" id="datepicker" placeholder="Choose a date">
-                <i class="fa fa-calendar" id="calendarIcon"></i>
+            <div class="titleLeft">
+                <div class="dateNav">
+                    <div class="pijlLinks pijl"></div>
+                    <h3>
+                        <?php echo date('l F j, Y', strtotime($currentDate)); ?>
+                    </h3> 
+                    <div class="pijlRechts pijl"></div>
+
+                </div>
+                
+                <div class="date-container">
+                    <input type="text" id="datepicker" placeholder="Choose a date">
+                    <i class="fa fa-calendar" id="calendarIcon"></i>
+                </div>
+            </div>
+            <div class="titleRight">
+                <div class="dropdown">
+                    <button class="dropdown-button">Switch view</button>
+                    <div class="dropdown-content">
+                        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
+                        <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+                    </div>
+                </div>
+                <a class="kruis" href="./index.php"></a>
             </div>
         </div>
-        <div class="dropdown">
-    <button class="dropdown-button">View Options</button>
-    <div class="dropdown-content">
-        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
-        <a class="formButton" href="visibleagenda.php">Weekly view</a>
-        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-    </div>
-</div>
-
+        <?php if($isAdmin || $isManager): ?>
+            <div class="agenda-form">
+                <a class="formButton" href="filinagenda.php">+ Add task</a>
+            </div>
+        <?php endif; ?>
         <div class="holder">
             <div class="agenda">
                 <table class="table table-bordered">
@@ -206,12 +165,7 @@ $pdo = null;
                     </tbody>
                 </table>
             </div>
-            <?php if($isAdmin || $isManager): ?>
-                <div class="agenda-form">
-                    <h2>Fill in agenda</h2>
-                    <a class="formButton" href="filinagenda.php">Go to form</a>
-                </div>
-            <?php endif; ?>
+        
         </div>
     </div>
 

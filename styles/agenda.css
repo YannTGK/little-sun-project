@@ -8,79 +8,126 @@
     
 }
 
-.nav2 {
+.title>* {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.titleLeft {
     display: flex;
     flex-direction: row;
-    gap: 24px;
-    margin: 24px 0px;
+}
+
+.dateNav {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+}
+
+.dateNav h3 {
+    width: 300px;
+    text-align: center;
+}
+
+.titleRight {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+.pijl {
+    width: 20px;
+    height: 100px;
+    background-image: url(../images/Arrow.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pijlLinks {
+    transform: rotate(90deg);
+    height: 20px;
+    width: 80px;
+}
+
+.pijlRechts {
+    transform: rotate(-90deg);
+    height: 20px;
+    width: 80px;
+}
+
+.date-container {
+    display: flex;
+    align-items: center;
+    margin-right: 65%;
+}
+.date-container input {
+    display: none; 
+}
+.date-container i {
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+}
+
+.dropdown-button {
+    background-color: #FFDD00;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-button:hover {
+    background-color: #FFC107;
+    transform: scale(1.05);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
     background-color: white;
+    overflow: hidden;
+    margin-top: 5px;
 }
 
-.formButton {
+.dropdown-content a {
     color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s;
 }
 
-.holder {
-    margin-bottom: 32px;
-    padding-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
 }
 
-.agenda {
-    display: flex;
-    flex-direction: row;
-    gap: 24px;
-    width: 1300px;
-    overflow-x: auto;
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
-.hour {
-    width: 100px;
-    border-right: 1px solid #ccc;
-    padding: 10px;
+.dropdown:hover .dropdown-button {
+    background-color: #FFC107;
 }
-
-.day {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.day > h3 {
-    width: 150px;
-    display: flex;
-}
-
-.hour-block {
-    border-bottom: 1px solid #ccc;
-    padding: 5px;
-}
-
 .agenda-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    margin-bottom: 24px;
 }
 
-.form-a {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.agenda-form > * {
+    color: white;
 }
-
-/* CSS voor de weergave van de agenda */
-.agenda th.current-day {
-    background-color: #f0f0f0; /* Achtergrondkleur voor de huidige dag */
-}
-
-.agenda td.current-day {
-    background-color: #ffffcc; /* Achtergrondkleur voor de huidige dag */
-}
-.navigation {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
