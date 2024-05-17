@@ -1,0 +1,93 @@
+.calendarActive, .calendarActive p {
+    background-color: white;
+    color:  #FFDD00;
+}
+
+.navItems .calendar {
+    background-image: url(../images/active_calendar.svg);
+    
+}
+
+h1{
+    margin-left: 220px;
+}
+
+.nav2 {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin: 24px 220px;
+    background-color: white;
+}
+
+.formButton {
+    color: black;
+}
+
+.holder {
+    margin-bottom: 32px;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+
+.agenda-container {
+    margin-top: 20px; /* 20px vanaf de navigatie */
+}
+.agenda {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.month {
+    flex: 0 1 calc(33.33% - 20px); /* 3 months per row */
+    box-sizing: border-box;
+    margin: 10px;
+}
+.month-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #f0f0f0;
+    padding: 5px;
+    border-radius: 5px;
+}
+.week {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.day {
+    width: calc(100% / 7 - 4px); /* Adjusted margin to fit smaller width */
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin: 2px;
+}
+.day-content {
+    padding: 3px;
+    background-color: #e6f7ff; /* Light blue background for scheduled days */
+    border-radius: 5px;
+}
+.day p {
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+}
+@media (max-width: 1200px) {
+    .month {
+        flex: 0 1 calc(50% - 20px); /* 2 columns on medium screens */
+    }
+}
+@media (max-width: 768px) {
+    .month {
+        flex: 0 1 calc(100% - 20px); /* 1 column on small screens */
+    }
+}
+
+

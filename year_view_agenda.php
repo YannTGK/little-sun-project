@@ -136,12 +136,13 @@ $pdo = null;
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/agenda.css">
+    <link rel="stylesheet" href="styles/yearview.css">
+
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
-    <div class="screen">
+    <div class="agenda-container">
         <div class="title">
             <h1>Yearly View</h1>
             <a class="kruis" href="./calendar.php"></a>
@@ -158,61 +159,45 @@ $pdo = null;
             </div>
         </div>
 
-        <div class="holder">
-        <?php
-$currentYear = date("Y");
-$numDaysInYear = date("z", mktime(0, 0, 0, 12, 31, $currentYear)) + 1;
-
-echo "<div class='agenda'>";
-for ($dayOfYear = 1; $dayOfYear <= $numDaysInYear; $dayOfYear++) {
-    $currentDate = date("Y-m-d", mktime(0, 0, 0, 1, $dayOfYear, $currentYear));
-    echo "<div class='day'>";
-    echo "<h3>" . date('l', strtotime($currentDate)) . "</h3>";
-    echo "<p>" . date('F j, Y', strtotime($currentDate)) . "</p>";
-    for ($hour = 7; $hour <= 19; $hour++) {
-        echo "<div class='hour-block'>";
-        echo "<p>$hour:00 - " . ($hour + 1) . ":00</p>";
-        if (isset($agenda_items_by_day_and_hour[$currentDate]) && isset($agenda_items_by_day_and_hour[$currentDate][$hour])) {
-            $agenda_items_for_hour = $agenda_items_by_day_and_hour[$currentDate][$hour];
-            foreach ($agenda_items_for_hour as $agenda_item) {
-                echo "<p>";
-                if (isset($agenda_item["username"])) {
-                    $starting_hour = intval(substr($agenda_item['startinghour'], 0, 2));
-                    $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
-                    if ($hour >= $starting_hour && $hour < $end_hour) {
-                        $bg_color = "red";
-                    } else {
-                        $bg_color = "";
+        <div class="agenda">
+            <?php
+            $currentYear = date("Y");
+            for ($month = 1; $month <= 12; $month++) {
+                echo "<div class='month'>";
+                echo "<div class='month-title'>" . date("F", mktime(0, 0, 0, $month, 1, $currentYear)) . "</div>";
+                echo "<div class='week'>";
+                for ($day = 1; $day <= cal_days_in_month(CAL_GREGORIAN, $month, $currentYear); $day++) {
+                    $currentDate = date("Y-m-d", mktime(0, 0, 0, $month, $day, $currentYear));
+                    $weekDay = date("N", strtotime($currentDate));
+                    if ($weekDay == 1 && $day != 1) {
+                        echo "</div><div class='week'>"; // Close previous week and start a new week
                     }
-                    // Always set accept to 1 (accepted)
-                    $agenda_item["accept"] = 1;
-                    $bg_color = "green"; // Set background color to green for accepted items
-                    echo "<p style='background-color: $bg_color;'>";
-                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "</p>";
-                    echo "<p style='background-color: $bg_color;'>Start hour: " . $agenda_item['startinghour'] ."</br>". "End hour: " . $agenda_item['endhour'] . "</p>";
-                } else {
-                    echo $agenda_item["task"];
+                    echo "<div class='day'>";
+                    if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                        $agenda_items_for_day = $agenda_items_by_day_and_hour[$currentDate];
+                        $hasScheduledItem = false;
+                        foreach ($agenda_items_for_day as $hour => $agenda_items_for_hour) {
+                            if (!empty($agenda_items_for_hour)) {
+                                $hasScheduledItem = true;
+                                break;
+                            }
+                        }
+                        $bg_color = $hasScheduledItem ? "#e6f7ff" : "";
+                        echo "<div class='day-content' style='background-color: $bg_color;'>";
+                    }
+                    echo "<p>" . $day . "</p>"; // Toon alleen het nummer van de dag
+                    if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                        echo "</div>"; // Close .day-content
+                    }
+                    echo "</div>"; // Close .day
                 }
-                echo "</p>"; // Close .task-item
+                echo "</div>"; // Close .week
+                echo "</div>"; // Close .month
             }
-        }
-        echo "</div>";
-    }
-    echo "</div>";
-}
-echo "</div>";
-?>
-
-            <?php if($isAdmin || $isManager): ?>
-              
-                <div class="agenda-form">
-                    <h2>Fill in agenda</h2>
-                    <a href="filinagenda.php" class="formButton">Fill in agenda</a>
-                </div>
-            <?php endif; ?>
-        </div>
+            ?>
+        </div> <!-- Close .agenda -->
     </div>
-    
+
     <script>
         document.getElementById('username').addEventListener('change', function() {
             var userId = this.options[this.selectedIndex].getAttribute('data-user-id');
