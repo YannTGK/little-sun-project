@@ -1,5 +1,16 @@
 <?php
 session_start();
+require_once './classes/taskManager.php'; // Inclusief de TaskManager klasse
+
+// Configuration
+$db_host = 'localhost';
+$db_username = 'root';
+$db_password = 'root';
+$db_name = 'littlesun';
+
+$pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
+
+$taskManager = new TaskManager($pdo);
 
 // Controleer de rol van de ingelogde gebruiker
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
@@ -8,26 +19,6 @@ $isManager = isset($_SESSION['role']) && $_SESSION['role'] === 'Manager';
 if (!$isAdmin && !$isManager) {
     header("Location: index.php");
     exit;
-}
-
-// Configuration
-$db_host = 'localhost';
-$db_username = 'root';
-$db_password = 'root';
-$db_name = 'littlesun';
-
-// Create a PDO instance
-$pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
-
-// Define a function to fetch assigned tasks
-function fetchAssignedTasks($pdo) {
-    $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
-              FROM account a 
-              JOIN assignedtasks at ON a.id = at.user_id 
-              JOIN tasks t ON at.tasktype_id = t.id";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // Haal alle vakantie-items op
@@ -39,7 +30,7 @@ $vacation_items = $stmt_vacation->fetchAll(PDO::FETCH_ASSOC);
 // Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
-$assigned_tasks = fetchAssignedTasks($pdo);
+$assigned_tasks = $taskManager->fetchAssignedTasks();
 
 // Groepeer taken per gebruiker
 $user_tasks = [];
@@ -72,22 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $startinghour = $_POST["startinghour"];
         $endhour = $_POST["endhour"];
         
-        insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day);
+        $taskManager->insertAgendaItem($user_id, $username, $task, $startinghour, $endhour, $day);
         header("Location: filinagenda.php");
         exit;
     }
-}
-
-function insertAgendaItem($pdo, $user_id, $username, $task, $startinghour, $endhour, $day) {
-    $query = "INSERT INTO agenda (user_id, username, task, startinghour, endhour, day) VALUES (:user_id, :username, :task, :startinghour, :endhour, :day)";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':task', $task);
-    $stmt->bindParam(':startinghour', $startinghour);
-    $stmt->bindParam(':endhour', $endhour);
-    $stmt->bindParam(':day', $day);
-    $stmt->execute();
 }
 ?>
 

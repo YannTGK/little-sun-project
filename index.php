@@ -62,8 +62,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
 
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
-                    <a href="reports.php">reports</a>
-
+         
                         <h2>Add Personnel</h2>
                         <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personnel, ensuring your team is optimized wherever the job takes them.</p>
                         <span class="editLinks">
@@ -73,13 +72,24 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
 
                     <div class="article">
                     
-                        <h2>All Personnel Information</h2>
-                        <p>See what all personal are up to. Make sure everybody is working on the tasks they are needed on.  Find a specific user to see his current job.</p>
+                        <h2>reports</h2>
+                        <p>See how long all personal has worked. Make sure everybody is working on the tasks they are needed on. simply check full work reports.</p>
                         <span class="editLinks">
-                            <a class="YButton" href="./workershub.php">Workershub</a>
+                            <a class="YButton" href="reports.php">reports</a>
                         </span>
    
                     </div>
+
+
+                    <div class="article">
+                    
+                    <h2>All Personnel Information</h2>
+                    <p>See what all personal are up to. Make sure everybody is working on the tasks they are needed on.  Find a specific user to see his current job.</p>
+                    <span class="editLinks">
+                        <a class="YButton" href="./workershub.php">Workershub</a>
+                    </span>
+
+                </div>
                 <?php endif; ?>
                 <div class="article">
                     
