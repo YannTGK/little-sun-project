@@ -49,11 +49,6 @@
     text-align: center;
 }
 
-.current-day {
-    position: relative;
-    background-color: #bdc3c7;
-}
-
 .month {
     flex: 1 1 calc(33.333% - 20px);
     border: 1px solid #ccc;
