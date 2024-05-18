@@ -146,85 +146,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/monthview.css">
-    <style>
-        .title {
-            display: flex;
-            align-items: center;
-        }
-        .title h1 {
-            margin-right: 10px;
-        }
-        .title .nav-arrows {
-            font-size: 24px;
-        }
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-
-        .dropdown-button {
-            background-color: #FFDD00; 
-            color: white; 
-            padding: 10px 20px; 
-            font-size: 16px;
-            border: none; 
-            cursor: pointer; 
-        }
-
-
-        .dropdown-content {
-            display: none; 
-            position: absolute; 
-            min-width: 160px; 
-            z-index: 1; 
-        }
-
-
-        .dropdown-content a {
-            color: black; 
-            padding: 12px 16px;
-            text-decoration: none; 
-            display: block; 
-        }
-
-        .dropdown-content a:hover {
-            background-color: whitesmoke;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-
-        .dropdown:hover .dropdown-button {
-            background-color: #FFDD00;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/agenda.css">
+        
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
         <div class="title">
-            <div class="nav-arrows">
-                <a href="?month=<?php echo date('Y-m', strtotime('-1 month', strtotime($startOfMonth))); ?>">&#10094;</a>
+            <div class="titleLeft">
+                <div class="dateNav">
+                    <a href="?month=<?php echo date('Y-m', strtotime('-1 month', strtotime($startOfMonth))); ?>">&#10094;</a>
+                    <h3>
+                        <?php echo date('F Y', strtotime($selectedMonth)); ?>
+                    </h3>
+                    <a href="?month=<?php echo date('Y-m', strtotime('+1 month', strtotime($startOfMonth))); ?>">&#10095;</a>
+                </div>
+                
             </div>
-            <h1>Monthly View</h1><h2><?php echo date('F Y', strtotime($selectedMonth)); ?></h2>
-            <div class="nav-arrows">
-                <a href="?month=<?php echo date('Y-m', strtotime('+1 month', strtotime($startOfMonth))); ?>">&#10095;</a>
+            <div class="titleRight">
+                <div class="dropdown">
+                    <button class="dropdown-button">View Options</button>
+                    <div class="dropdown-content">
+                        <a class="formButton" href="./daily_vieuw_agenda.php">Daily view</a>
+                        <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+                    </div>
+                </div>
+                <a class="kruis" href="./calendar.php"></a>
             </div>
-            <a class="kruis" href="./calendar.php"></a>
         </div>
-        <div class="dropdown">
-            <button class="dropdown-button">View Options</button>
-            <div class="dropdown-content">
-                <a class="formButton" href="daily_view_agenda.php">Daily view</a>
-                <a class="formButton" href="visibleagenda.php">Weekly view</a>
-                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+
+        <?php if($isAdmin || $isManager): ?>
+            
+            <div class="agenda-form">
+                <a href="filinagenda.php" class="formButton">+ Add task</a>
             </div>
-        </div>
+        <?php endif; ?>
 
         <div class="holder">
             <table class="agenda">
@@ -265,13 +224,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tbody>
             </table>
 
-            <?php if($isAdmin || $isManager): ?>
             
-                <div class="agenda-form">
-                    <h2>Fill in agenda</h2>
-                    <a href="filinagenda.php" class="formButton">Fill in agenda</a>
-                </div>
-            <?php endif; ?>
 
         </div>
     </div>

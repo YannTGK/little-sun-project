@@ -102,11 +102,11 @@ $pdo = null;
         <div class="title">
             <div class="titleLeft">
                 <div class="dateNav">
-                    <div class="pijlLinks pijl"></div>
+                    <a>&#10094;</a>
                     <h3>
                         <?php echo date('l F j, Y', strtotime($currentDate)); ?>
                     </h3> 
-                    <div class="pijlRechts pijl"></div>
+                    <a>&#10095;</a>
 
                 </div>
                 
@@ -125,9 +125,10 @@ $pdo = null;
                         <a class="formButton" href="year_view_agenda.php">Yearly view</a>
                     </div>
                 </div>
-                <a class="kruis" href="./index.php"></a>
+                <a class="kruis" href="./calendar.php"></a>
             </div>
         </div>
+
         <?php if($isAdmin || $isManager): ?>
             <div class="agenda-form">
                 <a class="formButton" href="filinagenda.php">+ Add task</a>

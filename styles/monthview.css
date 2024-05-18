@@ -8,103 +8,52 @@
     
 }
 
-.nav2 {
-    display: flex;
-    flex-direction: row;
-    gap: 24px;
-    margin: 24px 0px;
-    background-color: white;
-}
-
-.formButton {
-    color: black;
-}
-
 .holder {
-    margin-bottom: 32px;
-    padding-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-/* Algemene opmaak */
-.screen {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.title {
-    text-align: center;
-    margin-bottom: 20px;
-
-}
-
-.title h1 {
-    margin-left: 200px;
-}
-
-.nav2 {
-margin-left: 200px;
-}
-
-.editLink {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-.formButton {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #FFDD00;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.holder {
-    margin-left: 200px;
-    display: flex;
-    flex-direction: column;
+    overflow-x: auto;
 }
 
 .agenda {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
 }
 
 .agenda th, .agenda td {
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #ccc;
     text-align: center;
+    vertical-align: top;
 }
 
 .agenda th {
-    background-color: #f0f0f0;
+    background-color: #000000;
+    color: white;
+    font-weight: bold;
+}
+
+.agenda .date a {
+    display: inline-block;
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
 }
 
 .agenda .date {
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .agenda .event {
-    background-color: green;
-    color: #fff;
+    background-color: #28a745;
+    color: white;
     padding: 5px;
-    margin-top: 5px;
-    border-radius: 3px;
+    margin-bottom: 5px;
+    border-radius: 4px;
 }
 
 .agenda-form {
-    margin-top: 20px;
     text-align: center;
-}
-
-.agenda-form {
-    margin-top: 20px;
-    text-align: center;
+    display: flex;
 }
 
 .current-day {

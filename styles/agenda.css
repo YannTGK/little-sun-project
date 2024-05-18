@@ -16,6 +16,7 @@
 .titleLeft {
     display: flex;
     flex-direction: row;
+    gap: 24px;
 }
 
 .dateNav {
@@ -34,7 +35,7 @@
     align-items: center;
     gap: 32px;
 }
-.pijl {
+/*.pijl {
     width: 20px;
     height: 100px;
     background-image: url(../images/Arrow.png);
@@ -54,7 +55,7 @@
     height: 20px;
     width: 80px;
 }
-
+*/
 .date-container {
     display: flex;
     align-items: center;
