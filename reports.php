@@ -10,31 +10,35 @@ include_once(__DIR__ . "/classes/allworkers.php");
 $allWorkers = new AllWorkers();
 $workersData = $allWorkers->fetchWorkers();
 
+$loggedInHub = $_SESSION['hubname']; // Haal de hubnaam op uit de sessie
+
 $groupedData = []; // Hier zullen we gegevens groeperen op basis van de gebruikers-ID
 
-// Groepeer de gegevens op basis van gebruikers-ID
+// Groepeer de gegevens op basis van gebruikers-ID en filter op hubnaam
 foreach ($workersData as $worker) {
-    $userId = $worker['user_id'];
-    if (!isset($groupedData[$userId])) {
-        $groupedData[$userId] = [
-            'user_id' => $userId,
-            'username' => $worker['username'],
-            'email' => $worker['email'],
-            'profilepicture' => $worker['profilepicture'],
-            'role' => $worker['role'],
-            'hubname' => $worker['hubname'],
-            'TaskType' => $worker['TaskType'],
-            'work_hours' => [], // Hier worden de werkuren opgeslagen
-            'total_hours_worked' => '00:00' // Initialiseer totale uren gewerkt
+    if ($worker['hubname'] === $loggedInHub) {
+        $userId = $worker['user_id'];
+        if (!isset($groupedData[$userId])) {
+            $groupedData[$userId] = [
+                'user_id' => $userId,
+                'username' => $worker['username'],
+                'email' => $worker['email'],
+                'profilepicture' => $worker['profilepicture'],
+                'role' => $worker['role'],
+                'hubname' => $worker['hubname'],
+                'TaskType' => $worker['TaskType'],
+                'work_hours' => [], // Hier worden de werkuren opgeslagen
+                'total_hours_worked' => '00:00' // Initialiseer totale uren gewerkt
+            ];
+        }
+
+        // Voeg de extra gegevens toe aan de georganiseerde structuur
+        $groupedData[$userId]['work_hours'][] = [
+            'start' => $worker['start'],
+            'end' => $worker['end'],
+            'day' => $worker['day']
         ];
     }
-
-    // Voeg de extra gegevens toe aan de georganiseerde structuur
-    $groupedData[$userId]['work_hours'][] = [
-        'start' => $worker['start'],
-        'end' => $worker['end'],
-        'day' => $worker['day']
-    ];
 }
 
 // Bereken en voeg totale uren gewerkt toe voor elke gebruiker

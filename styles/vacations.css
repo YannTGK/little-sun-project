@@ -15,28 +15,63 @@
     gap: 64px;
 }
 
+
+.screen {
+    width: 80%;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.title {
+    background-color: #FFDD00;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+.title h1 {
+    margin: 0;
+}
+.holder {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
 .left {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-           
+    width: 100%;
 }
-
 .overflow {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    overflow: auto;
-    height: 400px;
-    margin-top: 8px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.overflow li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+.in-treatment {
+    color: blue;
+}
+.accepted {
+    color: green;
 }
 
-.rList {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
+.overflow form {
+    display: inline-block;
+    margin-left: 10px;
 }
-
-.rList {
-    font-size: 16px;
+.overflow input[type="text"] {
+    padding: 5px;
+    margin-right: 5px;
+}
+.overflow button {
+    padding: 5px 10px;
+    background-color: #5c5c5c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.overflow button:hover {
+    background-color: #000000;
 }

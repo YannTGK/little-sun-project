@@ -15,21 +15,32 @@ if (isset($_POST['submit'])) {
     $new_password = $_POST['new_password'];
     
     if (!empty($username) && !empty($new_password)) {
-        // Hash the new password
-        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        
-        // Update the password in the database
+        // Check if user exists
         $db = new mysqli('localhost', 'root', 'root', 'littlesun');
         if ($db->connect_error) {
             die("Connection failed: " . $db->connect_error);
         }
 
-        $stmt = $db->prepare("UPDATE account SET password = ? WHERE username = ?");
-        $stmt->bind_param('ss', $hashed_password, $username);
-        
-        if ($stmt->execute()) {
+        $stmt = $db->prepare("SELECT * FROM account WHERE username = ?");
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            echo "User does not exist.";
         } else {
-            echo "Error updating password: " . $stmt->error;
+            // Hash the new password
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        
+            // Update the password in the database
+            $stmt = $db->prepare("UPDATE account SET password = ? WHERE username = ?");
+            $stmt->bind_param('ss', $hashed_password, $username);
+        
+            if ($stmt->execute()) {
+                echo "Password updated successfully.";
+            } else {
+                echo "Error updating password: " . $stmt->error;
+            }
         }
 
         $stmt->close();
@@ -42,14 +53,46 @@ if (isset($_POST['submit'])) {
 $allTasks = Task::getAll();
 
 if (isset($_POST['add_task'])) {
-    // Your existing add task logic
+    $username = $_POST['username'];
+    $task_type = $_POST['task_type'];
+
+    // Check if user exists
+    $db = new mysqli('localhost', 'root', 'root', 'littlesun');
+    if ($db->connect_error) {
+        die("Connection failed: " . $db->connect_error);
+    }
+
+    $stmt = $db->prepare("SELECT * FROM account WHERE username = ?");
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        echo "User does not exist.";
+    } else {
+        // Get user ID
+        $user = $result->fetch_assoc();
+        $user_id = $user['id'];
+
+        // Insert task assignment into database
+        $stmt = $db->prepare("INSERT INTO task_assignments (user_id, task_type) VALUES (?, ?)");
+        $stmt->bind_param('is', $user_id, $task_type);
+
+        if ($stmt->execute()) {
+            echo "Task added successfully.";
+        } else {
+            echo "Error adding task: " . $stmt->error;
+        }
+    }
+
+    $stmt->close();
+    $db->close();
 }
 
 if (isset($_POST['delete_task'])) {
     // Your existing delete task logic
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +134,7 @@ if (isset($_POST['delete_task'])) {
                         <th>Username</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Tasktype</th>
+                        <th>Task(s)</th>
                         <th>Change Password</th>
                     </tr>
                 </thead>
@@ -100,16 +143,68 @@ if (isset($_POST['delete_task'])) {
                     $allWorkers = new AllWorkers();
                     $workersData = $allWorkers->fetchWorkers(); // Fetch all workers
 
+                    $prevUsername = null;
+                    $tasks = [];
+
                     foreach ($workersData as $worker) {
+                        $currentUsername = $worker['username'];
+                        
+                        if ($currentUsername !== $prevUsername && $prevUsername !== null) {
+                            // Output previous user's data
+                            echo "<tr>";
+                            echo "<td><img class='employeeImg' src='" . htmlspecialchars($prevWorker['profilepicture']) . "' alt='Profielfoto'></td>";
+                            echo "<td>" . htmlspecialchars($prevWorker['username']) . "</td>";
+                            echo "<td>" . htmlspecialchars($prevWorker['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($prevWorker['role']) . "</td>";
+                            echo "<td>";
+                            echo "<select>";
+                            foreach ($tasks as $task) {
+                                echo "<option>" . htmlspecialchars($task) . "</option>";
+                            }
+                            echo "</select>";
+                            echo "</td>";
+                            echo "<td>
+                                    <form method='post' onsubmit=\"return confirm('Are you sure you want to change the password?')\">
+                                        <input type='hidden' name='username' value='" . htmlspecialchars($prevWorker['username']) . "'>
+                                        <input type='password' name='new_password' placeholder='Enter new password' required>
+                                        <input type='submit' name='submit' value='Change'>
+                                    </form>
+                                  </td>";
+                            echo "</tr>";
+
+                           
+                            // Reset tasks array
+                            $tasks = [];
+                        }
+
+                        // Add task to array if it's not
+                        // already in the array
+                        if (!in_array($worker['TaskType'], $tasks)) {
+                            $tasks[] = $worker['TaskType'];
+                        }
+
+                        // Update previous username and worker
+                        $prevUsername = $currentUsername;
+                        $prevWorker = $worker;
+                    }
+
+                    // Output last user's data
+                    if ($prevUsername !== null) {
                         echo "<tr>";
-                        echo "<td><img class='employeeImg' src='" . htmlspecialchars($worker['profilepicture']) . "' alt='Profielfoto'></td>";
-                        echo "<td>" . htmlspecialchars($worker['username']) . "</td>";
-                        echo "<td>" . htmlspecialchars($worker['email']) . "</td>";
-                        echo "<td>" . htmlspecialchars($worker['role']) . "</td>";
-                        echo "<td>" . htmlspecialchars($worker['TaskType']) . "</td>";
+                        echo "<td><img class='employeeImg' src='" . htmlspecialchars($prevWorker['profilepicture']) . "' alt='Profielfoto'></td>";
+                        echo "<td>" . htmlspecialchars($prevWorker['username']) . "</td>";
+                        echo "<td>" . htmlspecialchars($prevWorker['email']) . "</td>";
+                        echo "<td>" . htmlspecialchars($prevWorker['role']) . "</td>";
+                        echo "<td>";
+                        echo "<select>";
+                        foreach ($tasks as $task) {
+                            echo "<option>" . htmlspecialchars($task) . "</option>";
+                        }
+                        echo "</select>";
+                        echo "</td>";
                         echo "<td>
                                 <form method='post' onsubmit=\"return confirm('Are you sure you want to change the password?')\">
-                                    <input type='hidden' name='username' value='" . htmlspecialchars($worker['username']) . "'>
+                                    <input type='hidden' name='username' value='" . htmlspecialchars($prevWorker['username']) . "'>
                                     <input type='password' name='new_password' placeholder='Enter new password' required>
                                     <input type='submit' name='submit' value='Change'>
                                 </form>
@@ -122,7 +217,7 @@ if (isset($_POST['delete_task'])) {
         </div>
 
         <div>
-            <h2>Add a task to a user</h2>
+            <h2>Assign a task to a user</h2>
             <form method="post">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
@@ -132,7 +227,7 @@ if (isset($_POST['delete_task'])) {
                         <option value="<?php echo htmlspecialchars($task['TaskType']); ?>"><?php echo htmlspecialchars($task['TaskType']); ?></option>
                     <?php endforeach ?>
                 </select>
-                <input type="submit" name="add_task" value="Add">
+                <input type="submit" name="add_task" value="Assign">
             </form>
         </div>
 

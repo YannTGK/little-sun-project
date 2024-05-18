@@ -8,74 +8,105 @@
     
 }
 
-h1 {
+.screen {
+    margin: 20px 240px;
+    width: 80%;
+    max-width: 1200px;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title h1 {
+    margin: 0;
+}
+
+.kruis {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.kruis:before {
+    content: "✖";
+    font-size: 14px;
+    color: white;
+    display: block;
+    line-height: 20px;
     text-align: center;
 }
 
 .table-container {
-    height: 550px;
-    overflow: auto;
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+table th,
+table td {
+    padding: 10px;
     text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
     background-color: #f2f2f2;
 }
 
-.hidden {
-    display: none;
-}
-
 .employeeImg {
-    max-width: 100px;
-    max-height: 100px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-        /* Stijlen voor de pop-up */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Halfdoorzichtige achtergrond */
-            z-index: 9999; /* Zorg ervoor dat de pop-up bovenaan staat */
-            overflow: auto; /* Zorgt ervoor dat de inhoud van de pop-up kan scrollen als deze te groot is */
-        }
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
 
-        .popup-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* Centreren van de pop-up */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px; /* Maximale breedte van de pop-up */
-            border-radius: 10px; /* Afgeronde hoeken */
-        }
+.popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+ul {
+    padding: 0;
+}
+
+li {
+    list-style-type: none;
+    margin-bottom: 5px;
+}
+
+#totalWorkedHours {
+    margin-top: 20px;
+}
