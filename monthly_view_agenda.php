@@ -200,33 +200,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </thead>
                 <tbody>
                     <?php
+                    // Determine the first day and the last day of the current month
+                    $currentYear = date("Y");
+                    $currentMonth = date("m");
+                    $startOfMonth = date("Y-m-01");
+                    $endOfMonth = date("Y-m-t", strtotime($startOfMonth));
                     $currentDate = $startOfMonth;
+
+                    // Calculate the number of empty cells before the first day of the month
+                    $firstDayOfMonth = date("N", strtotime($startOfMonth));
+                    $emptyCells = $firstDayOfMonth - 1;
+
+                    // Print empty cells before the first day of the month
+                    echo "<tr>";
+                    for ($i = 0; $i < $emptyCells; $i++) {
+                        echo "<td></td>";
+                    }
+
+                    // Loop through all the days of the month
                     while ($currentDate <= $endOfMonth) {
-                        echo "<tr>";
-                        for ($i = 0; $i < 7; $i++) {
-                            echo "<td>";
-                            echo "<div class='date'><a href='daily_vieuw_agenda.php?date=" . date('Y-m-d', strtotime($currentDate)) . "'>" . date('j', strtotime($currentDate)) . "</a></div>";
-                            
-            
-                            if (isset($agenda_items_by_day_and_hour[$currentDate])) {
-                                foreach ($agenda_items_by_day_and_hour[$currentDate] as $hour => $agenda_items_for_hour) {
-                                    foreach ($agenda_items_for_hour as $agenda_item) {
-                                        echo "<div class='event'>" . $agenda_item["task"] . " - " . $agenda_item["username"] . "</div>";
-                                    }
+                        // If it's the beginning of a week and not the first week, start a new row
+                        if (date("N", strtotime($currentDate)) == 1 && $currentDate != $startOfMonth) {
+                            echo "</tr><tr>";
+                        }
+
+                        echo "<td>";
+                        echo "<div class='date'><a href='daily_vieuw_agenda.php?date=" . date('Y-m-d', strtotime($currentDate)) . "'>" . date('j', strtotime($currentDate)) . "</a></div>";
+
+                        if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                            foreach ($agenda_items_by_day_and_hour[$currentDate] as $hour => $agenda_items_for_hour) {
+                                foreach ($agenda_items_for_hour as $agenda_item) {
+                                    echo "<div class='event'>" . $agenda_item["task"] . " - " . $agenda_item["username"] . "</div>";
                                 }
                             }
-                            echo "</td>";
-                            $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                         }
-                        echo "</tr>";
+
+                        echo "</td>";
+
+                        $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                     }
+
+                    echo "</tr>";
                     ?>
                 </tbody>
             </table>
-
-            
-
         </div>
+
     </div>
         
     <script>

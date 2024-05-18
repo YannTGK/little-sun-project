@@ -69,104 +69,83 @@ $agenda_items_by_day_and_hour = fetchAgendaItems($pdo, $username, $isManager);
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/yearview.css">
-    <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-button {
-            background-color: #FFDD00; 
-            color: white; 
-            padding: 10px 20px; 
-            font-size: 16px;
-            border: none; 
-            cursor: pointer; 
-        }
-
-        .dropdown-content {
-            display: none; 
-            position: absolute; 
-            min-width: 160px; 
-            z-index: 1; 
-        }
-
-        .dropdown-content a {
-            color: black; 
-            padding: 12px 16px;
-            text-decoration: none; 
-            display: block; 
-        }
-
-        .dropdown-content a:hover {
-            background-color: whitesmoke;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .dropdown:hover .dropdown-button {
-            background-color: #FFDD00;
-        } 
-    </style>
+    <link rel="stylesheet" href="styles/agenda.css">
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
-
-    <div class="agenda-container">
+    <div class="screen">
         <div class="title">
-            <h1>Yearly View</h1>
-            <a class="kruis" href="./calendar.php"></a>
-        </div>
-        <div class="dropdown">
-            <button class="dropdown-button">View Options</button>
-            <div class="dropdown-content">
-                <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
-                <a class="formButton" href="visibleagenda.php">Weekly view</a>
-                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+            <div class="titleLeft">
+                <div class="dateNav">
+                    <a>&#10094;</a>
+                    <h3>Yearly View</h3>
+                    <a>&#10095;</a>
+                </div>
+
+            </div>
+            <div class="titleRight">
+                <div class="dropdown">
+                    <button class="dropdown-button">Switch view</button>
+                    <div class="dropdown-content">
+                        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
+                        <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+                    </div>
+                </div>
+                <a class="kruis" href="./calendar.php">&nbsp;</a>
             </div>
         </div>
 
-        <div class="agenda">
-            <?php
-            $currentYear = date("Y");
-            for ($month = 1; $month <= 12; $month++) {
-                echo "<div class='month'>";
-                echo "<div class='month-title'>" . date("F", mktime(0, 0, 0, $month, 1, $currentYear)) . "</div>";
-                echo "<div class='week'>";
-                for ($day = 1; $day <= cal_days_in_month(CAL_GREGORIAN, $month, $currentYear); $day++) {
-                    $currentDate = date("Y-m-d", mktime(0, 0, 0, $month, $day, $currentYear));
-                    $weekDay = date("N", strtotime($currentDate));
-                    if ($weekDay == 1 && $day != 1) {
-                        echo "</div><div class='week'>"; // Close previous week and start a new week
+        <div class="holder">
+            <div class="agenda">
+                <?php
+                $currentYear = date("Y");
+                for ($month = 1; $month <= 12; $month++) {
+                    echo "<div class='month'>";
+                    echo "<div class='month-title'>" . date("F", mktime(0, 0, 0, $month, 1, $currentYear)) . "</div>";
+                    echo "<div class='week'>";
+
+                    // Determine the first day of the month
+                    $firstDayOfMonth = date("N", mktime(0, 0, 0, $month, 1, $currentYear));
+
+                    // Print empty cells before the first day of the month to align it correctly
+                    for ($i = 1; $i < $firstDayOfMonth; $i++) {
+                        echo "<div class='day empty'></div>";
                     }
-                    echo "<div class='day'>";
-                    if (isset($agenda_items_by_day_and_hour[$currentDate])) {
-                        $agenda_items_for_day = $agenda_items_by_day_and_hour[$currentDate];
-                        $hasScheduledItem = false;
-                        foreach ($agenda_items_for_day as $hour => $agenda_items_for_hour) {
-                            if (!empty($agenda_items_for_hour)) {
-                                $hasScheduledItem = true;
-                                break;
-                            }
+
+                    for ($day = 1; $day <= cal_days_in_month(CAL_GREGORIAN, $month, $currentYear); $day++) {
+                        $currentDate = date("Y-m-d", mktime(0, 0, 0, $month, $day, $currentYear));
+                        $weekDay = date("N", strtotime($currentDate));
+                        if ($weekDay == 1 && $day != 1) {
+                            echo "</div><div class='week'>"; // Close previous week and start a new week
                         }
-                        $bg_color = $hasScheduledItem ? "#e6f7ff" : "";
-                        echo "<div class='day-content' style='background-color: $bg_color;'>";
+                        echo "<div class='day'>";
+                        if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                            $agenda_items_for_day = $agenda_items_by_day_and_hour[$currentDate];
+                            $hasScheduledItem = false;
+                            foreach ($agenda_items_for_day as $hour => $agenda_items_for_hour) {
+                                if (!empty($agenda_items_for_hour)) {
+                                    $hasScheduledItem = true;
+                                    break;
+                                }
+                            }
+                            $bg_color = $hasScheduledItem ? "#e6f7ff" : "";
+                            echo "<div class='day-content' style='background-color: $bg_color;'>";
+                        }
+                        // Add a hyperlink to the daily view and pass the date as a parameter
+                        echo "<p><a href='daily_vieuw_agenda.php?date=$currentDate'>" . $day . "</a></p>"; 
+                        if (isset($agenda_items_by_day_and_hour[$currentDate])) {
+                            echo "</div>"; // Close .day-content
+                        }
+                        echo "</div>"; // Close .day
                     }
-                    // Voeg een hyperlink toe naar de dagelijkse weergave en stuur de datum als parameter
-                    echo "<p><a href='daily_vieuw_agenda.php?date=$currentDate'>" . $day . "</a></p>"; 
-                    if (isset($agenda_items_by_day_and_hour[$currentDate])) {
-                        echo "</div>"; // Close .day-content
-                    }
-                    echo "</div>"; // Close .day
+                    echo  "</div>"; // Close .week
+                    echo "</div>"; // Close .month
                 }
-                echo  "</div>"; // Close .week
-                echo "</div>"; // Close .month
-            }
-            ?>
-        </div> <!-- Close .agenda -->
+                ?>
+            </div> <!-- Close .agenda -->
+        </div>
     </div>
 
     <script>
