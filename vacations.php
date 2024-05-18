@@ -14,25 +14,35 @@ try {
     exit;
 }
 
-if (isset($_POST['vacation_id']) && isset($_POST['reject_reason'])) {
-    $vacation_id = $_POST['vacation_id'];
-    $reject_reason = $_POST['reject_reason'];
-    $query = "UPDATE vacation SET accepted = 0, rejectreason = :reject_reason WHERE vacation_id = :vacation_id";
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':vacation_id', $vacation_id);
-    $stmt->bindParam(':reject_reason', $reject_reason);
-    $stmt->execute();
-} elseif (isset($_POST['vacation_id'])) {
-    $vacation_id = $_POST['vacation_id'];
-    $query = "UPDATE vacation SET accepted = 1 WHERE vacation_id = :vacation_id";
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':vacation_id', $vacation_id);
-    $stmt->execute();
-}
+try {
+    if (isset($_POST['vacation_id']) && isset($_POST['reject_reason'])) {
+        $vacation_id = $_POST['vacation_id'];
+        $reject_reason = $_POST['reject_reason'];
+        $query = "UPDATE vacation SET accepted = 0, rejectreason = :reject_reason, new_request = 1 WHERE vacation_id = :vacation_id";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':vacation_id', $vacation_id);
+        $stmt->bindParam(':reject_reason', $reject_reason);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating vacation record: " . implode(" ", $stmt->errorInfo()));
+        }
+    } elseif (isset($_POST['vacation_id'])) {
+        $vacation_id = $_POST['vacation_id'];
+        $query = "UPDATE vacation SET accepted = 1, new_request = 1 WHERE vacation_id = :vacation_id";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':vacation_id', $vacation_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating vacation record: " . implode(" ", $stmt->errorInfo()));
+        }
+    }
 
-$query = "SELECT vacation_id, user_id, username, reason, date, accepted FROM vacation";
-$stmt = $conn->query($query);
-$vacations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $query = "SELECT vacation_id, user_id, username, reason, date, accepted, new_request FROM vacation";
+    $stmt = $conn->query($query);
+    $vacations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "PDO Error: " . $e->getMessage();
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>

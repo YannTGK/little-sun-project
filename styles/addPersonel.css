@@ -22,65 +22,133 @@
     gap: 64px;
 }
 
-.tasktype {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.right {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-}
-.grouping {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
 }
 
-.taskItems {
-    width: 350px;
+/* style.css */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 16px;
+}
+
+/* addPersonel.css */
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    height: 120px;
-    overflow-y: auto;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.taskItem {
-    width: calc(33% - 5px);
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.close-button {
+    font-size: 24px;
+    text-decoration: none;
+    color: #333;
+}
+
+.error {
+    color: red;
     margin-bottom: 10px;
 }
 
-.allPersonel {
-    height: 225px;
-    overflow: auto;
+.form {
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.onePersonel {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
+.form-group {
+    flex: 1 1 100%;
+    margin-bottom: 15px;
+}
 
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.tasks {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.task {
+    flex: 1 1 48%;
+    margin-bottom: 10px;
+}
+
+.task label {
+    margin-left: 5px;
+}
+
+.form-actions {
+    display: flex;
     justify-content: space-between;
-    width: 500px;
+    flex-wrap: wrap;
 }
 
-.onePersonalInfo {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
-    align-items: center;
+.btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    margin: 5px 0;
 }
 
-.personalImg {
-    width: 50px; 
-    height: 50px; 
-    margin-left: 10px;
+.btn:hover {
+    background-color: #0056b3;
 }
 
-  
+/* Responsive styles */
+@media (max-width: 600px) {
+    .form-group {
+        flex: 1 1 100%;
+    }
+
+    .task {
+        flex: 1 1 100%;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

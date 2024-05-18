@@ -33,8 +33,9 @@ class AllWorkers {
                     tasks t ON at.tasktype_id = t.id
                   LEFT JOIN
                     workhours w ON a.id = w.user_id"; // assuming the user_id in workhours table matches with the account id
-
-        $result = $this->conn->query($query);
+                
+        
+$result = $this->conn->query($query);
 
         if ($result) {
             $workers = array(); 

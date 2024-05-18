@@ -175,53 +175,13 @@ $allTasks = Task::getAll();
                     <span class="editLink">
                         <input type="submit" value="Add Personal" class="formButton" />
                     </span>
+                    <span class="editLink">
+                    <input type="button" value="All Personal" class="formButton" onclick="window.location.href = 'workershub.php';" />
+                    </span>
 
                 </form>
             </div>
 
-            <div class="right">
-                <div class="updatePassword grouping">
-                    <h2>Update Password</h2>
-                    <form action="" method="post" class="formHolder">
-                        <div class="form">
-                            <label for="personal_id">Personal ID</label>
-                            <input type="text" name="personal_id" id="personal_id" />
-                        </div>
-
-                        <div class="form">
-                            <label for="new_password">New Password</label>
-                            <input type="password" name="new_password" id="new_password" />
-                        </div>
-                        <div class="editLink">
-                            <input type="submit" name="update_password" value="Update Password" class="formButton" />
-                        </div>
-                    </form>
-                </div>
-
-                <div class="allPersonel grouping">
-
-                    <?php foreach ($allPersonals as $personal) : ?>
-                        <div class="onePersonel">
-                            <div class="onePersonalInfo">
-                                <?php
-                                if (!empty($personal['profilePicture'])) {
-                                    echo '<img src="' . $personal['profilePicture'] . '" alt="Profile Picture" class="personalImg">';
-                                }
-                                ?>
-                                <span>
-                                    <?php echo "ID: " . $personal['id'] . " - " . htmlspecialchars($personal['username']) ?> <br><?php echo htmlspecialchars($personal['email']); ?>
-                                </span>
-                            </div>
-
-                            <form action="" method="post" onsubmit="return confirmDelete();">
-                                <input type="hidden" name="delete_personal" value="<?php echo $personal['id']; ?>">
-                                <div class="editLink">
-                                    <input type="submit" value="Delete" class="formButton2">
-                                </div>
-                            </form>
-                        </div>
-                    <?php endforeach ?>
-                </div>
 
             </div>
         </div>

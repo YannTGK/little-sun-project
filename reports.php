@@ -24,25 +24,25 @@ foreach ($workersData as $worker) {
             'role' => $worker['role'],
             'hubname' => $worker['hubname'],
             'TaskType' => $worker['TaskType'],
-            'start' => [],
-            'end' => [],
-            'day' => [],
+            'work_hours' => [], // Hier worden de werkuren opgeslagen
             'total_hours_worked' => '00:00' // Initialiseer totale uren gewerkt
         ];
     }
 
     // Voeg de extra gegevens toe aan de georganiseerde structuur
-    $groupedData[$userId]['start'][] = $worker['start'];
-    $groupedData[$userId]['end'][] = $worker['end'];
-    $groupedData[$userId]['day'][] = $worker['day'];
+    $groupedData[$userId]['work_hours'][] = [
+        'start' => $worker['start'],
+        'end' => $worker['end'],
+        'day' => $worker['day']
+    ];
 }
 
 // Bereken en voeg totale uren gewerkt toe voor elke gebruiker
 foreach ($groupedData as &$userData) {
     $totalHours = 0;
-    foreach ($userData['start'] as $key => $start) {
-        $start = new DateTime($start);
-        $end = new DateTime($userData['end'][$key]);
+    foreach ($userData['work_hours'] as $work) {
+        $start = new DateTime($work['start']);
+        $end = new DateTime($work['end']);
         $diff = $start->diff($end);
         $totalHours += $diff->format('%H') + ($diff->format('%I') / 60);
     }
@@ -80,67 +80,19 @@ foreach ($groupedData as &$userData) {
 
         </div>
         <input type="text" id="usernameInput" placeholder="Filter on username...">
-        <input type="text" id="hubnameInput" placeholder="Filter on hub-name...">
-        <input type="text" id="taskTypeInput" placeholder="Filter on task...">
-        <select id="dayInput">
-            <option value="">Select day</option>
-            <?php
-            for ($i = 1; $i <= 31; $i++) {
-                $dayFormatted = str_pad($i, 2, '0', STR_PAD_LEFT); // Voeg een nul toe aan enkele getallen
-                echo "<option value='$dayFormatted'>$dayFormatted</option>";
-            }
-            ?>
-        </select>
-
-        <select id="monthInput">
-            <option value="">Select month</option>
-            <?php
-            $months = array(
-                1 => "January",
-                2 => "February",
-                3 => "March",
-                4 => "April",
-                5 => "May",
-                6 => "June",
-                7 => "July",
-                8 => "August",
-                9 => "September",
-                10 => "October",
-                11 => "November",
-                12 => "December"
-            );
-
-            foreach ($months as $monthNumber => $monthName) {
-                $monthNumberFormatted = str_pad($monthNumber, 2, '0', STR_PAD_LEFT); // Voeg een nul toe aan enkele getallen
-                echo "<option value='$monthNumberFormatted'>$monthName</option>";
-            }
-            ?>
-        </select>
-
-        <select id="yearInput">
-            <option value="">Select year</option>
-            <?php
-            $currentYear = date("Y");
-            for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
-                echo "<option value='$i'>$i</option>";
-            }
-            ?>
-        </select>
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>User ID</th>
+                        <th>Profile Picture</th>
                         <th>Username</th>
                         <th>E-mail</th>
-                        <th>Profile picture</th>
                         <th>Role</th>
                         <th>Hubname</th>
                         <th>Tasktype</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Day</th>
                         <th>Total hours worked</th>
+                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody id="workersTableBody">
@@ -148,59 +100,140 @@ foreach ($groupedData as &$userData) {
                     foreach ($groupedData as $userData) {
                         echo "<tr>";
                         echo "<td>" . $userData['user_id'] . "</td>";
+                        echo "<td><img class='employeeImg' src='" . $userData['profilepicture'] . "' alt='Profile Picture'></td>";
                         echo "<td>" . $userData['username'] . "</td>";
                         echo "<td>" . $userData['email'] . "</td>";
-                        echo "<td><img class='employeeImg' src='" . $userData['profilepicture'] . "' alt='Profielfoto'></td>";
                         echo "<td>" . $userData['role'] . "</td>";
                         echo "<td>" . $userData['hubname'] . "</td>";
                         echo "<td>" . $userData['TaskType'] . "</td>";
-                        // Toon alle starttijden
-                        echo "<td>";
-                        foreach ($userData['start'] as $start) {
-                            echo $start . "<br>";
-                        }
-                        echo "</td>";
-                        // Toon alle eindtijden
-                        echo "<td>";
-                        foreach ($userData['end'] as $end) {
-                            echo $end . "<br>";
-                        }
-                        echo "</td>";
-                        // Toon alle dagen
-                        echo "<td>";
-                        foreach ($userData['day'] as $day) {
-                            echo $day . "<br>";
-                        }
-                        echo "</td>";
-                        // Toon totale uren gewerkt
                         echo "<td>" . $userData['total_hours_worked'] . "</td>";
+                        // Voeg een knop toe om details weer te geven
+                        echo "<td><button class='detailsButton' data-userid='" . $userData['user_id'] . "'>Details</button></td>";
                         echo "</tr>";
                     }
                     ?>
                 </tbody>
             </table>
         </div>
-        <?php
-$totalAllWorkersHours = 0;
-foreach ($groupedData as $userData) {
-    $totalAllWorkersHours += strtotime($userData['total_hours_worked']);
-}
-
-$totalAllWorkersHours = gmdate("H:i", $totalAllWorkersHours);
-?>
-
-<table>
-    <tbody>
-        <tr>
-            <td colspan="10"><strong>Total all workers</strong></td>
-            <td><?php echo $totalAllWorkersHours; ?></td>
-        </tr>
-    </tbody>
-</table>
-
-
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <h2 id="popupName"></h2>
+                <img id="popupImg" class="employeeImg">
+                <ul id="detailsList"></ul>
+                <div id="totalWorkedHours"></div> <!-- Toegevoegd: sectie voor totaal gewerkte tijd per dag -->
+            </div>
+        </div>
     </div>
-    <script src="js/workershub.js"></script>
+
+    <script>
+        // Voeg een eventlistener toe aan alle details-knoppen
+        const detailsButtons = document.querySelectorAll('.detailsButton');
+        detailsButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const userId = this.dataset.userid;
+                const user = getUserDetails(userId);
+                if (user) {
+                    displayUserDetails(user);
+                }
+            });
+        });
+
+        // Simuleer het ophalen van gebruikersdetails (vervang dit door je eigen logica om details op te halen)
+        function getUserDetails(userId) {
+            // Hier kun je logica toevoegen
+            // om de details van de gebruiker op te halen uit je datastructuur
+            // Voor nu simuleren we gewoon wat dummy-details
+            return {
+                id: userId,
+                name: <?php echo json_encode($groupedData); ?>[userId]['username'],
+                profilePicture: <?php echo json_encode($groupedData); ?>[userId]['profilepicture'],
+                work_hours: <?php echo json_encode($groupedData); ?>[userId]['work_hours']
+            };
+        }
+
+        // Toon de details in de pop-up
+        function displayUserDetails(user) {
+            const popup = document.getElementById('popup');
+            const nameElement = document.getElementById('popupName');
+            const imgElement = document.getElementById('popupImg');
+            const detailsList = document.getElementById('detailsList');
+            const totalWorkedHours = document.getElementById('totalWorkedHours'); // Nieuw: sectie voor totaal gewerkte tijd per dag
+
+            nameElement.textContent = user.name;
+            imgElement.src = user.profilePicture;
+
+            // Wis eerdere details
+            detailsList.innerHTML = '';
+            totalWorkedHours.innerHTML = ''; // Wis eerdere totaal gewerkte tijd
+
+            // Vul de details in de lijst
+            user.work_hours.forEach(work => {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'Start: ' + work.start + ', End: ' + work.end + ', Day: ' + work.day;
+                detailsList.appendChild(listItem);
+            });
+
+            // Bereken en toon totaal gewerkte tijd per dag
+            const totalPerDay = {}; // Object om totaal gewerkte tijd per dag op te slaan
+            user.work_hours.forEach(work => {
+                const day = work.day;
+                const start = new Date(work.start);
+                const end = new Date(work.end);
+                const diffInMilliseconds = end - start;
+                const diffInHours = diffInMilliseconds / (1000 * 60 * 60); // Omzetten naar uren
+                totalPerDay[day] = (totalPerDay[day] || 0) + diffInHours;
+            });
+
+            // Voeg totaal gewerkte tijd per dag toe aan de pop-up
+            for (const [day, totalHours] of Object.entries(totalPerDay)) {
+                if (!isNaN(totalHours)) {
+                    const dayTotalElement = document.createElement('div');
+                    dayTotalElement.textContent = `Total worked hours on ${day}: ${totalHours.toFixed(2)} hours`;
+                    totalWorkedHours.appendChild(dayTotalElement);
+                } else {
+                    const dayTotalElement = document.createElement('div');
+                    dayTotalElement.textContent = `Total worked hours on ${day}: 0 hours`;
+                    totalWorkedHours.appendChild(dayTotalElement);
+                }
+            }
+
+            // Toon de pop-up
+            popup.style.display = 'block';
+        }
+
+        // Sluit de pop-up wanneer er buiten wordt geklikt
+        window.onclick = function (event) {
+            const popup = document.getElementById('popup');
+            if (event.target == popup) {
+                closePopup();
+            }
+        }
+
+        // Sluit de pop-up wanneer er op de 'X' wordt geklikt
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+
+        // Voeg event listener toe voor het filteren op gebruikersnaam
+        const usernameInput = document.getElementById('usernameInput');
+        usernameInput.addEventListener('input', function () {
+            const filterValue = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#workersTableBody tr');
+            tableRows.forEach(row => {
+                const usernameCell = row.querySelector('td:nth-child(3)');
+                if (usernameCell) {
+                    const username = usernameCell.textContent.toLowerCase();
+                    if (username.indexOf(filterValue) > -1) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
