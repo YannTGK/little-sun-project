@@ -111,89 +111,49 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
     <link rel="stylesheet" href="styles/agenda.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .date-container {
-            display: flex;
-            align-items: center;
-            margin-right: 85%;
-        }
-        .date-container input {
-            display: none; 
-        }
-        .date-container i {
-            font-size: 24px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-
-        .dropdown-button {
-            background-color: #FFDD00; 
-            color: white; 
-            padding: 10px 20px; 
-            font-size: 16px;
-            border: none; 
-            cursor: pointer; 
-        }
-
-
-        .dropdown-content {
-            display: none; 
-            position: absolute; 
-            min-width: 160px; 
-            z-index: 1; 
-        }
-
-
-        .dropdown-content a {
-            color: black; 
-            padding: 12px 16px;
-            text-decoration: none; 
-            display: block; 
-        }
-
-        .dropdown-content a:hover {
-            background-color: whitesmoke;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-
-        .dropdown:hover .dropdown-button {
-            background-color: #FFDD00;
-        }
-    </style>
+  
 </head>
 <body>
     <?php include_once(__DIR__ . "/classes/nav.php"); ?>
 
     <div class="screen">
         <div class="title">
-            <h1>Weekly View</h1>
-            <div class="date-container">
-                <input type="text" id="datepicker" placeholder="Choose a date">
-                <i class="fa fa-calendar" id="calendarIcon"></i>
+            <div class="titleLeft">
+                <div class="dateNav">
+                    <a>&#10094;</a>
+                    <h3>
+                        Weekly view
+                    </h3> 
+                    <a>&#10095;</a>
+                </div>
+                
+                <div class="date-container">
+                    <input type="text" id="datepicker" placeholder="Choose a date">
+                    <i class="fa fa-calendar" id="calendarIcon"></i>
+                </div>
+            </div>
+            <div class="titleRight">
+                <div class="dropdown">
+                    <button class="dropdown-button">Switch view</button>
+                    <div class="dropdown-content">
+                        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
+                        <a class="formButton" href="visibleagenda.php">Weekly view</a>
+                        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+                        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+                    </div>
+                </div>
+                <a class="kruis" href="./calendar.php"></a>
             </div>
         </div>
-        <div class="dropdown">
-    <button class="dropdown-button">View Options</button>
-    <div class="dropdown-content">
-        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
-        <a class="formButton" href="visibleagenda.php">Weekly view</a>
-        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-    </div>
-</div>
 
-  <!-- Foutmelding weergeven -->
-  <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
+        <?php if($isAdmin || $isManager): ?>
+            <div class="agenda-form">
+                <a class="formButton" href="filinagenda.php">+ Add task</a>
+            </div>
+        <?php endif; ?>
+
+        <!-- Foutmelding weergeven -->
+        <?php if(isset($errorMessage) && !empty($errorMessage)): ?>
             <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
         <?php endif; ?>
 
@@ -257,12 +217,6 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
                 echo "</table>";
                 ?>
             </div>
-            <?php if($isAdmin || $isManager): ?>
-                <div class="agenda-form">
-                    <h2>Fill in agenda</h2>
-                    <a class="formButton" href="filinagenda.php">Go to form</a>
-                </div>
-            <?php endif; ?>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>

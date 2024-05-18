@@ -1,18 +1,81 @@
 <?php
-include_once('classes/Db.php');
-include_once('classes/user_agenda.php');
-include_once('classes/agenda.php');
+session_start();
 
-$pdo = Db::getConnection();
-$user = new User();
-$agenda = new Agenda($pdo);
+// Controleer de rol van de ingelogde gebruiker
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+$isManager = isset($_SESSION['role']) && $_SESSION['role'] === 'Manager';
 
-$assigned_tasks = $agenda->fetchAssignedTasks();
+// Configuration
+$db_host = 'localhost';
+$db_username = 'root';
+$db_password = 'root';
+$db_name = 'littlesun';
 
+// Create a PDO instance
+$pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
+
+// Define a function to fetch assigned tasks
+function fetchAssignedTasks($pdo) {
+    $query = "SELECT a.id, a.username, a.email, t.TaskType, at.tasktype_id, at.user_id 
+               FROM account a 
+               JOIN assignedtasks at ON a.id = at.user_id 
+               JOIN tasks t ON at.tasktype_id = t.id";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Define a function to fetch agenda items for the logged-in user or all users if Manager
+function fetchAgendaItems($pdo, $username, $isManager, $date) {
+    if ($isManager) {
+        $query = "SELECT * FROM agenda WHERE day = :day";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':day', $date, PDO::PARAM_STR);
+        $stmt->execute();
+        $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $query = "SELECT * FROM agenda WHERE username = :username AND day = :day";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':day', $date, PDO::PARAM_STR);
+        $stmt->execute();
+        $agenda_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    $agenda_items_by_hour = [];
+
+    foreach ($agenda_items as $item) {
+        $hour = intval(substr($item['startinghour'], 0, 2)); // Extract hour from starting hour
+        if (!isset($agenda_items_by_hour[$hour])) {
+            $agenda_items_by_hour[$hour] = [];
+        }
+        $agenda_items_by_hour[$hour][] = $item;
+    }
+
+    return $agenda_items_by_hour;
+}
+
+// Zet standaard de accept status op 1 voor alle taken
+function setDefaultAcceptStatus($pdo, $date) {
+    $query = "UPDATE agenda SET accept = 1 WHERE day = :day AND accept IS NULL";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':day', $date, PDO::PARAM_STR);
+    $stmt->execute();
+}
+
+$assigned_tasks = fetchAssignedTasks($pdo);
+
+// Haal de gebruikersnaam van de ingelogde gebruiker uit de sessie
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
+
+// Huidige datum voor de dagweergave
 $currentDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
-$agenda->setDefaultAcceptStatus($currentDate);
 
-$agenda_items_by_hour = $agenda->fetchAgendaItems($user->getUsername(), $user->isManager(), $currentDate);
+// Zet de standaard accept status voor de huidige datum
+setDefaultAcceptStatus($pdo, $currentDate);
+
+// Haal de agenda-items op voor de ingelogde gebruiker of alle gebruikers als Manager
+$agenda_items_by_hour = fetchAgendaItems($pdo, $username, $isManager, $currentDate);
 
 $pdo = null;
 ?>
@@ -45,10 +108,12 @@ $pdo = null;
             cursor: pointer;
             margin-left: 10px;
         }
-        .dropdown {
+                .dropdown {
             position: relative;
             display: inline-block;
         }
+
+
         .dropdown-button {
             background-color: #FFDD00; 
             color: white; 
@@ -57,24 +122,32 @@ $pdo = null;
             border: none; 
             cursor: pointer; 
         }
+
+
         .dropdown-content {
             display: none; 
             position: absolute; 
             min-width: 160px; 
             z-index: 1; 
         }
+
+
         .dropdown-content a {
             color: black; 
             padding: 12px 16px;
             text-decoration: none; 
             display: block; 
         }
+
         .dropdown-content a:hover {
             background-color: whitesmoke;
         }
+
         .dropdown:hover .dropdown-content {
             display: block;
         }
+
+
         .dropdown:hover .dropdown-button {
             background-color: #FFDD00;
         }
@@ -92,14 +165,14 @@ $pdo = null;
             </div>
         </div>
         <div class="dropdown">
-            <button class="dropdown-button">View Options</button>
-            <div class="dropdown-content">
-                <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
-                <a class="formButton" href="visibleagenda.php">Weekly view</a>
-                <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
-                <a class="formButton" href="year_view_agenda.php">Yearly view</a>
-            </div>
-        </div>
+    <button class="dropdown-button">View Options</button>
+    <div class="dropdown-content">
+        <a class="formButton" href="daily_vieuw_agenda.php">Daily view</a>
+        <a class="formButton" href="visibleagenda.php">Weekly view</a>
+        <a class="formButton" href="./monthly_view_agenda.php">Monthly view</a>
+        <a class="formButton" href="year_view_agenda.php">Yearly view</a>
+    </div>
+</div>
 
         <div class="holder">
             <div class="agenda">
@@ -133,7 +206,7 @@ $pdo = null;
                     </tbody>
                 </table>
             </div>
-            <?php if ($user->isAdmin() || $user->isManager()): ?>
+            <?php if($isAdmin || $isManager): ?>
                 <div class="agenda-form">
                     <h2>Fill in agenda</h2>
                     <a class="formButton" href="filinagenda.php">Go to form</a>

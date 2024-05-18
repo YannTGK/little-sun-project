@@ -43,6 +43,14 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
         </h1>
         <div class="holder">
             <div class="articles">
+                <div class="article">
+                    
+                    <h2>Organize planning</h2>
+                    <p>Your central hub for managing workdays and hours. With our menu, you effortlessly submit your workdays and track your hours. Simple and efficient. </p>
+                    <span class="editLinks">
+                        <a class="YButton" href="visibleagenda.php">Organize</a>
+                    </span>   
+                </div>
              
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
@@ -66,14 +74,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                     </div>
                 <?php endif; ?>
 
-                <div class="article">
-                    
-                    <h2>Organize planning</h2>
-                    <p>Your central hub for managing workdays and hours. With our menu, you effortlessly submit your workdays and track your hours. Simple and efficient. </p>
-                    <span class="editLinks">
-                        <a class="YButton" href="visibleagenda.php">Organize</a>
-                    </span>   
-                </div>
+               
 
             </div>
                 

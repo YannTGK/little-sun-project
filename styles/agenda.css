@@ -8,79 +8,177 @@
     
 }
 
-.nav2 {
+.title>* {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.titleLeft {
     display: flex;
     flex-direction: row;
     gap: 24px;
-    margin: 24px 0px;
-    background-color: white;
 }
 
-.formButton {
-    color: black;
-}
-
-.holder {
-    margin-bottom: 32px;
-    padding-top: 16px;
+.dateNav {
     display: flex;
-    flex-direction: column;
-    gap: 40px;
+    flex-direction: row;
+    gap: 0px;
+}
+
+.dateNav h3 {
+    width: 300px;
+    text-align: center;
+}
+
+.titleRight {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+/*.pijl {
+    width: 20px;
+    height: 100px;
+    background-image: url(../images/Arrow.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pijlLinks {
+    transform: rotate(90deg);
+    height: 20px;
+    width: 80px;
+}
+
+.pijlRechts {
+    transform: rotate(-90deg);
+    height: 20px;
+    width: 80px;
+}
+*/
+.date-container {
+    display: flex;
+    align-items: center;
+    margin-right: 65%;
+}
+.date-container input {
+    display: none; 
+}
+.date-container i {
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+}
+
+.dropdown-button {
+    background-color: #FFDD00;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-button:hover {
+    background-color: #FFC107;
+    transform: scale(1.05);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+    background-color: white;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropdown-button {
+    background-color: #FFC107;
+}
+.agenda-form {
+    margin-bottom: 24px;
+}
+
+.agenda-form > * {
+    color: white;
 }
 
 .agenda {
-    display: flex;
-    flex-direction: row;
-    gap: 24px;
-    width: 1300px;
-    overflow-x: auto;
+    font-family: Arial, sans-serif;
 }
 
-.hour {
-    width: 100px;
-    border-right: 1px solid #ccc;
-    padding: 10px;
+.table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.day {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-.day > h3 {
-    width: 150px;
-    display: flex;
+.table th {
+    background-color: #f2f2f2;
 }
 
-.hour-block {
-    border-bottom: 1px solid #ccc;
-    padding: 5px;
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
 
-.agenda-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.table tbody tr:hover {
+    background-color: #ddd;
 }
 
-.form-a {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* CSS voor de weergave van de agenda */
-.agenda th.current-day {
-    background-color: #f0f0f0; /* Achtergrondkleur voor de huidige dag */
-}
-
-.agenda td.current-day {
-    background-color: #ffffcc; /* Achtergrondkleur voor de huidige dag */
-}
-.navigation {
-    display: flex;
-    justify-content: space-between;
+.task-item {
     margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
 }
 
+.task-item .task-info {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.task-item.accepted {
+    background-color: #d3f7d8;
+}
+
+.task-item.rejected {
+    background-color: #ffd5d5;
+}
+
+.task-item.pending {
+    background-color: #f4f4f4;
+}

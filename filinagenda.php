@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="screen">
         <div class="title">
             <h1>Fill in Agenda</h1>
-            <a class="kruis" href="./calendar.php"></a>
+            <a class="kruis" href="#" onclick="history.back(); return false;"></a>
         </div>
 
         <!-- Foutmelding weergeven -->
