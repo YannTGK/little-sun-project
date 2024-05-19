@@ -190,7 +190,7 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
                 for ($hour = 7; $hour <= 19; $hour++) {
                     echo "<tr>";
                     echo "<td>" . $hour . ":00 - " . ($hour + 1) . ":00</td>";
-
+                
                     for ($day = 0; $day < 7; $day++) {
                         $date = date('Y-m-d', strtotime("$startOfWeek +$day days"));
                         echo "<td>";
@@ -201,10 +201,10 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
                                 $end_hour = intval(substr($agenda_item['endhour'], 0, 2));
                                 if ($hour >= $starting_hour && $hour < $end_hour) {
                                     $bg_color = "green"; // Set background color to green for accepted items
-                                    echo "<div style='background-color: $bg_color;'>";
-                                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "<br>";
-                                    echo "Start: " . $agenda_item['startinghour'] . "<br>";
-                                    echo "End: " . $agenda_item['endhour'];
+                                    echo "<div style='background-color: $bg_color; padding: 10px; margin-bottom: 10px; border-radius: 5px; color: white; font-weight: bold;'>";
+                                    echo htmlspecialchars($agenda_item["task"]) . " - " . htmlspecialchars($agenda_item["username"]) . "<br>";
+                                    echo "<span style='font-weight: normal;'>Start: " . htmlspecialchars($agenda_item['startinghour']) . "<br>";
+                                    echo "End: " . htmlspecialchars($agenda_item['endhour']) . "</span>";
                                     echo "</div>";
                                 }
                             }
@@ -214,6 +214,7 @@ function acceptOrDeclineTask($pdo, $task_id, $accept) {
                     echo "</tr>";
                 }
                 echo "</tbody>";
+                
                 echo "</table>";
                 ?>
             </div>

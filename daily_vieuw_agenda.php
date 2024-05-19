@@ -151,21 +151,29 @@ $pdo = null;
                             echo "<tr>";
                             echo "<td>" . sprintf('%02d:00 - %02d:00', $hour, $hour + 1) . "</td>";
                             echo "<td>";
+
                             if (isset($agenda_items_by_hour[$hour])) {
                                 foreach ($agenda_items_by_hour[$hour] as $agenda_item) {
-                                    $bg_color = $agenda_item["accept"] == 1 ? "green" : ($agenda_item["accept"] == 0 ? "red" : "grey");
-                                    echo "<div style='background-color: $bg_color; padding: 5px; margin-bottom: 5px;'>";
-                                    echo $agenda_item["task"] . " - " . $agenda_item["username"] . "<br>";
-                                    echo "Start: " . $agenda_item['startinghour'] . "<br>";
-                                    echo "End: " . $agenda_item['endhour'];
+                                    $bg_color = match ($agenda_item["accept"]) {
+                                        1 => "green",
+                                        0 => "red",
+                                        default => "green"
+                                    };
+                                    
+                                    echo "<div style='background-color: $bg_color; padding: 10px; margin-bottom: 10px; border-radius: 5px; color: white; font-weight: bold;'>";
+                                    echo htmlspecialchars($agenda_item["task"]) . " - " . htmlspecialchars($agenda_item["username"]) . "<br>";
+                                    echo "<span style='font-weight: normal;'>Start: " . htmlspecialchars($agenda_item['startinghour']) . "<br>";
+                                    echo "End: " . htmlspecialchars($agenda_item['endhour']) . "</span>";
                                     echo "</div>";
                                 }
                             }
+
                             echo "</td>";
                             echo "</tr>";
                         }
                         ?>
                     </tbody>
+
                 </table>
             </div>
             
