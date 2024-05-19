@@ -22,11 +22,6 @@
                         <p class="navTxt">calendar</p>
                 </a>
 
-                <a href="settings.php" class="navItems settingsActive">
-                        <div class="settings img"></div>
-                        <p class="navTxt">settings</p>
-                </a>   
-
         </div>
 
         <a class="logout" href="login.php">Logout</a>
