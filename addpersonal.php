@@ -10,7 +10,7 @@ $error = '';
 if (!empty($_POST['delete_personal'])) {
     $personalIdToDelete = $_POST['delete_personal'];
     try {
-        Personal::deleteById($personalIdToDelete);
+        personal::deleteById($personalIdToDelete);
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -18,7 +18,7 @@ if (!empty($_POST['delete_personal'])) {
 
 if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['role']) && !empty($_POST['hubname'])) {
     try {
-        $personal = new Personal();
+        $personal = new personal();
 
         $personal->setName($_POST['username']);
         $personal->setEmail($_POST['email']);
@@ -84,7 +84,7 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
     }
 }
 
-$allPersonals = Personal::getAll();
+$allpersonals = personal::getAll();
 $allHubs = Hub::getAll();
 $allTasks = Task::getAll();
 ?><!DOCTYPE html>
@@ -94,7 +94,7 @@ $allTasks = Task::getAll();
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>addPersonal</title>
+    <title>addpersonal</title>
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/addPersonel.css">
@@ -110,7 +110,7 @@ $allTasks = Task::getAll();
 
     <div class="screen">
         <div class="title">
-            <h1>Add Personnel</h1>
+            <h1>Add personal</h1>
             <a class="kruis" href="./index.php"></a>
         </div>
 
@@ -145,7 +145,7 @@ $allTasks = Task::getAll();
                             <label for="role">Role</label>
                             <select name="role" id="role">
                                 <option value="Manager">Manager</option>
-                                <option value="Personal">Personal</option>
+                                <option value="personal">personal</option>
                             </select>
                         </div>
 
@@ -161,7 +161,7 @@ $allTasks = Task::getAll();
 
                     <div class="selectGroup">
                         <div class="tasktype">
-                            <label>Personnel task(s)</label>
+                            <label>personal task(s)</label>
                             <div class="taskItems">
                                 <?php foreach ($allTasks as $task) : ?>
                                     <div class="taskItem">
@@ -173,10 +173,10 @@ $allTasks = Task::getAll();
                         </div>
                     </div>
                     <span class="editLink">
-                        <input type="submit" value="Add Personal" class="formButton" />
+                        <input type="submit" value="Add personal" class="formButton" />
                     </span>
                     <span class="editLink">
-                    <input type="button" value="All Personal" class="formButton" onclick="window.location.href = 'workershub.php';" />
+                    <input type="button" value="All personal" class="formButton" onclick="window.location.href = 'workershub.php';" />
                     </span>
 
                 </form>

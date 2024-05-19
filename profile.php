@@ -44,7 +44,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
             <div class="articles">
                 <div class="article">
                     <h2>Plan Your Vacation</h2>
-                    <p>Planning a trip or some freetime? Everybody needs some time of. Plan it in here so your co-workers know when you are away.  Your vacation still needs to be accepted. </p>
+                    <p>Planning a trip or some freetime? Everybody needs some time off. Plan it in here so your co-workers know when you are away.  Your vacation still needs to be accepted. </p>
                     <span class="editLinks">
                         <a class="YButton" href="./selfVacation.php">Edit</a>
                     </span>

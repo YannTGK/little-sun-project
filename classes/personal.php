@@ -1,6 +1,6 @@
 <?php
 
-class Personal {
+class personal {
     private string $username;
     private string $email;
     private string $password;
@@ -39,9 +39,9 @@ class Personal {
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (!$result) {
-            throw new Exception("Personal not found.");
+            throw new Exception("personal not found.");
         }
-        $personal = new Personal();
+        $personal = new personal();
         $personal->setName($result['username']);
         $personal->setEmail($result['email']);
         $personal->setPassword($result['password']);
@@ -60,7 +60,7 @@ class Personal {
         if (!$result) {
             return null; 
         }
-        $personal = new Personal();
+        $personal = new personal();
         $personal->setName($result['username']);
         $personal->setEmail($result['email']);
         $personal->setPassword($result['password']);

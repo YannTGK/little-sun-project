@@ -63,8 +63,8 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
          
-                        <h2>Add Personnel</h2>
-                        <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personnel, ensuring your team is optimized wherever the job takes them.</p>
+                        <h2>Add personnel</h2>
+                        <p>Empower your workforce management effortlessly! With our menu, you can seamlessly add and remove personal, ensuring your team is optimized wherever the job takes them.</p>
                         <span class="editLinks">
                             <a class="YButton" href="./addpersonal.php">Edit</a>
                         </span>
@@ -73,7 +73,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                     <div class="article">
                     
                         <h2>reports</h2>
-                        <p>See how long all personal has worked. Make sure everybody is working on the tasks they are needed on. simply check full work reports.</p>
+                        <p>See how long all personnel has worked. Make sure everybody is working on the tasks they are needed on. Easily check full work reports.</p>
                         <span class="editLinks">
                             <a class="YButton" href="reports.php">reports</a>
                         </span>
@@ -83,8 +83,8 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
 
                     <div class="article">
                     
-                    <h2>All Personnel Information</h2>
-                    <p>See what all personal are up to. Make sure everybody is working on the tasks they are needed on.  Find a specific user to see his current job.</p>
+                    <h2>All personal Information</h2>
+                    <p>See what all personnel are up to. Make sure everybody is working on the tasks they are needed on.  Find a specific user to see his current job.</p>
                     <span class="editLinks">
                         <a class="YButton" href="./workershub.php">Workershub</a>
                     </span>
@@ -94,7 +94,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                 <div class="article">
                     
                     <h2>Check in</h2>
-                    <p>Check in and out of work everyday. That makes it possible for everybody to get paid correctly and to see all worked hours.</p>
+                    <p>Check in and out of work everyday. This makes it possible for everybody to get paid correctly and to see all worked hours.</p>
                     <span class="editLinks">
                         <a class="YButton" href="./checkin.php">See</a>
                     </span>

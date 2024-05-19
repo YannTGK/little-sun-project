@@ -55,7 +55,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                 <?php if($isAdmin || $isManager): ?>
                     <div class="article">
                         
-                        <h2>Manage Task</h2>
+                        <h2>Manage Tasks</h2>
                         <p>Add and delete possible tasks for your employees. You can streemline what has to be done by everybody. Make sure no tasks are left out. After this, add the task to the specific employee</p>
                         <span class="editLinks">
                             <a class="YButton" href="./tasks.php">Manage</a>
@@ -65,7 +65,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
                     <div class="article">
                         
                         <h2>Vacation Requests</h2>
-                        <p>Comfirm or reject vacations. Everybody has right on vacations but is it the best to go on one? Here you can view, accept or deny all the vacation queries. </p>
+                        <p>Comfirm or reject vacations. Everybody has a right to take a vacation. Here you can view, accept or deny all the vacation requests. </p>
                         <span class="editLinks">
                             <a class="YButton" href="./vacations.php">Watch requests</a>
                         </span>

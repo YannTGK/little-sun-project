@@ -44,7 +44,7 @@ CREATE TABLE `account` (
 INSERT INTO `account` (`id`, `username`, `email`, `profilePicture`, `password`, `role`, `hubname`) VALUES
 (4, 'admin', '', '', '$2y$12$SGVUZsXsX9oLJ3x8U0jZzOTZ6tQNx3fzeJZLMeXQ2fpaEn0KNKtJy', 'admin', ''),
 (23, 'Yann', 'Tagakouyann@gmail.com', 'uploads/Group_images.png', '$2y$12$qWTkcqvu/G8tS5RZncp8cuQmjDn88F6HJ7o9mEd08mD9DoD//w.7q', 'Manager', 'BMB'),
-(25, 'Dante', 'Verbiestdante@gmail.com', 'uploads/Group_images.png', '$2y$12$tHC4VVKnQluGWHFkxYmnYuz0Fh2ehkr2n0ryqTUdNAxBJhbI29PfC', 'Personal', 'Sweden in Dormville');
+(25, 'Dante', 'Verbiestdante@gmail.com', 'uploads/Group_images.png', '$2y$12$tHC4VVKnQluGWHFkxYmnYuz0Fh2ehkr2n0ryqTUdNAxBJhbI29PfC', 'personal', 'Sweden in Dormville');
 
 -- --------------------------------------------------------
 
