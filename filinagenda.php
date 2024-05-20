@@ -2,13 +2,7 @@
 session_start();
 require_once './classes/taskManager.php'; // Inclusief de TaskManager klasse
 
-// Configuration
-$db_host = 'localhost';
-$db_username = 'root';
-$db_password = 'root';
-$db_name = 'littlesun';
-
-$pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
+$pdo = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
 
 $taskManager = new TaskManager($pdo);
 
@@ -89,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="screen">
         <div class="title">
             <h1>Fill in Agenda</h1>
-            <a class="kruis" href="#" onclick="history.back(); return false;"></a>
+            <a class="kruis" href="./visibleagenda.php"></a>
         </div>
 
         <!-- Foutmelding weergeven -->

@@ -21,7 +21,7 @@ class AssignedTask {
 
     public function save() {
         try {
-            $conn = new PDO('mysql:host=localhost;dbname=littlesun', "root", "root");
+            $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
 
         
             $findUserStatement = $conn->prepare("SELECT id FROM account WHERE username = :username");

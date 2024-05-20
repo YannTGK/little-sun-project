@@ -1,11 +1,22 @@
 <?php
-require_once(__DIR__ . "/classes/Db.php");
 require_once(__DIR__ . "/classes/usersession.php");
 require_once(__DIR__ . "/classes/workhours.php");
 
+$hostname = 'ID436917_littlesun.db.webhosting.be';
+$username = 'ID436917_littlesun';
+$password = 'LittleSun5';
+$database = 'ID436917_littlesun';
+
+try {
+    $conn = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
+    // Set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    // Handle the connection error
+    die("Connection failed: " . $e->getMessage());
+}
+
 $userSession = new UserSession();
-$db = new Db();
-$conn = $db->getConnection();
 $workHours = new WorkHours($conn);
 
 $currentTime = date("Y-m-d H:i:s");
@@ -24,9 +35,7 @@ if (isset($_POST['action'])) {
 }
 
 $workedTimes = $workHours->getTotalWorkedMinutes($userSession->getUserID());
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -72,10 +81,10 @@ $workedTimes = $workHours->getTotalWorkedMinutes($userSession->getUserID());
                         $result = $conn->query($sql);
 
                         if (!$result) {
-                            echo "Error: " . $conn->error;
+                            echo "Error: " . $conn->errorInfo()[2]; // For PDO, use errorInfo() to get error details
                         } else {
-                            if ($result->num_rows > 0) {
-                                while($row = $result->fetch_assoc()) {
+                            if ($result->rowCount() > 0) {
+                                while($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                     echo "<tr>";
                                     echo "<td>" . $row["username"]. "</td>";
                                     echo "<td>" . $row["start"]. "</td>";
@@ -97,7 +106,7 @@ $workedTimes = $workHours->getTotalWorkedMinutes($userSession->getUserID());
                             }
                         }
 
-                        $conn->close();
+                        $conn = null; // Close the connection
                         ?>
                     </tbody>
                 </table>

@@ -29,7 +29,7 @@ class Hub {
     }
 
     public function save(){
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("INSERT INTO hub (hubname, hublocation) VALUES (:hubname, :hublocation)");
         $statement->bindValue("hubname", $this->hubname);
         $statement->bindValue("hublocation", $this->hublocation);
@@ -37,7 +37,7 @@ class Hub {
     }
 
     public static function getAll(){
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("SELECT * FROM hub");
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -45,7 +45,7 @@ class Hub {
     }
 
     public static function deleteById($hubId) {
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("DELETE FROM hub WHERE id = :id");
         $statement->bindValue("id", $hubId);
         return $statement->execute();

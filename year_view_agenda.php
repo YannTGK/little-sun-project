@@ -5,14 +5,8 @@ session_start();
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $isManager = isset($_SESSION['role']) && $_SESSION['role'] === 'Manager';
 
-// Configuration
-$db_host = 'localhost';
-$db_username = 'root';
-$db_password = 'root';
-$db_name = 'littlesun';
-
 // Create a PDO instance
-$pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
+$pdo = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
 
 // Define a function to fetch agenda items for the logged-in user or all users if Manager
 function fetchAgendaItems($pdo, $username, $isManager) {

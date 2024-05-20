@@ -33,7 +33,7 @@ class personal {
     }
 
     public static function getById($id) {
-        $conn = new PDO('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("SELECT * FROM account WHERE id = :id");
         $statement->bindValue(":id", $id);
         $statement->execute();
@@ -52,7 +52,7 @@ class personal {
     }
 
     public static function getByUsername($username) {
-        $conn = new PDO('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("SELECT * FROM account WHERE username = :username");
         $statement->bindValue(":username", $username);
         $statement->execute();
@@ -71,7 +71,7 @@ class personal {
     }
 
     public static function updatePasswordById($id, $hashedPassword) {
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("UPDATE account SET password = :password WHERE id = :id");
         $statement->bindValue(":password", $hashedPassword);
         $statement->bindValue(":id", $id);
@@ -118,7 +118,7 @@ class personal {
 
 
     public function save(){
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
 
         $existingUser = self::getByUsername($this->username);
         if ($existingUser) {
@@ -138,7 +138,7 @@ class personal {
     }
 
     public static function getAll(){
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("SELECT * FROM account WHERE role != 'admin'");
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -146,7 +146,7 @@ class personal {
     }
 
     public static function deleteById($personalId) {
-        $conn = new PDO ('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         $statement = $conn->prepare("DELETE FROM account WHERE id = :id");
         $statement->bindValue(":id", $personalId);
         return $statement->execute();

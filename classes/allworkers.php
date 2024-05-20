@@ -6,7 +6,7 @@ class AllWorkers {
     private $conn;
 
     public function __construct() {
-        $this->conn = new PDO('mysql:host=localhost;dbname=littlesun', "root", "root");
+        $this->conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
         if (!$this->conn) {
             die("Connection failed: " . $this->conn->errorInfo());
         }

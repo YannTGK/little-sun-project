@@ -15,8 +15,8 @@ if (isset($_POST['submit'])) {
     $new_password = $_POST['new_password'];
     
     if (!empty($username) && !empty($new_password)) {
-        // Check if user exists
-        $db = new mysqli('localhost', 'root', 'root', 'littlesun');
+        // Check if user exists !!!! DETAILS
+        $db = new mysqli('ID436917_littlesun.db.webhosting.be', 'ID436917_littlesun', 'LittleSun5', 'ID436917_littlesun');
         if ($db->connect_error) {
             die("Connection failed: " . $db->connect_error);
         }
@@ -55,9 +55,9 @@ $allTasks = Task::getAll();
 if (isset($_POST['add_task'])) {
     $username = $_POST['username'];
     $task_type = $_POST['task_type'];
-
-    // Check if user exists
-    $db = new mysqli('localhost', 'root', 'root', 'littlesun');
+    //new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
+    // Check if user exists !!!! REALLY NOTICE
+    $db = new mysqli('ID436917_littlesun.db.webhosting.be', 'ID436917_littlesun', 'LittleSun5', 'ID436917_littlesun');
     if ($db->connect_error) {
         die("Connection failed: " . $db->connect_error);
     }

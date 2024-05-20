@@ -12,7 +12,7 @@ $db_password = 'root';
 $db_name = 'littlesun';
 
 // Create a PDO instance
-$pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);
+$pdo = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
 
 // Define a function to fetch assigned tasks
 function fetchAssignedTasks($pdo) {

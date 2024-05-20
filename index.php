@@ -72,7 +72,7 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
 
                     <div class="article">
                     
-                        <h2>reports</h2>
+                        <h2>Reports</h2>
                         <p>See how long all personnel has worked. Make sure everybody is working on the tasks they are needed on. Easily check full work reports.</p>
                         <span class="editLinks">
                             <a class="YButton" href="reports.php">reports</a>
@@ -91,16 +91,18 @@ if(isset($_SESSION['role']) && $_SESSION['role'] === 'Manager') {
 
                 </div>
                 <?php endif; ?>
-                <div class="article">
-                    
-                    <h2>Check in</h2>
-                    <p>Check in and out of work everyday. This makes it possible for everybody to get paid correctly and to see all worked hours.</p>
-                    <span class="editLinks">
-                        <a class="YButton" href="./checkin.php">See</a>
-                    </span>
-   
-                </div>
                 
+                <?php if(!$isAdmin && !$isManager): ?>
+                    <div class="article">
+                    
+                        <h2>Check in</h2>
+                        <p>Check in and out of work everyday. This makes it possible for everybody to get paid correctly and to see all worked hours.</p>
+                        <span class="editLinks">
+                            <a class="YButton" href="./checkin.php">See</a>
+                        </span>
+   
+                    </div>
+                <?php endif; ?>
             </div>
             
             <div class="homeImg">

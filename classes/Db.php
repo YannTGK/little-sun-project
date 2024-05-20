@@ -5,10 +5,10 @@ class Db{
 
     public static function getConnection(){
 
-        include_once(__DIR__ . "/../settings/settings.php");
+        //include_once(__DIR__ . "/../settings/settings.php");
 
         if(self::$conn === null){
-            self::$conn = new mysqli(SETTINGS['db']['host'], SETTINGS['db']['user'], SETTINGS['db']['password'], SETTINGS['db']['database']);
+            self::$conn = new PDO('mysql:host=ID436917_littlesun.db.webhosting.be;dbname=ID436917_littlesun', 'ID436917_littlesun', 'LittleSun5');
             //self::$conn = new mysqli('localhost', 'root', 'root', 'littlesun');
             return self::$conn;
         }
